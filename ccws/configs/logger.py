@@ -34,9 +34,6 @@ def load_logger_config(ex):
                 'handlers': ['file', 'console'],
             }
         },
-        'root': {
-            'level': 'NOTSET',
-        }
     }
 
     logging.config.dictConfig(config)

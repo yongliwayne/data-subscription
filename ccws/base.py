@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import websocket
 import datetime
 import csv
@@ -26,38 +24,42 @@ class Exchange(object):
         self.Logger = logging.getLogger(self.ExchangeId)
         [self.ExConfig, self._WebSocketAddress] = ExConfigs[self.ExchangeId]
         self.Config = {}
+        self.Currency = None
 
     def set_market(self, currency, mode):
+        self.Currency = currency
         self.Config = self.ExConfig[currency][mode]
         self.Logger = logging.getLogger('%s.%s.%s' % (self.ExchangeId, currency, mode))
 
     def run_websocketapp(self, **kwargs):
         self.Logger.info('Begin Connection')
         url = self._WebSocketAddress + kwargs.get('url_append', '')
+        on_open = kwargs.get('on_open', self.on_open)
         on_error = kwargs.get('on_error', self.on_error)
         on_close = kwargs.get('on_error', self.on_close)
         on_message = kwargs.get('on_message', self.on_message)
         self.WebSocketConnection = websocket.WebSocketApp(
             url,
+            on_open=on_open,
             on_error=on_error,
             on_close=on_close,
             on_message=on_message,
-            **kwargs,
         )
-        while True:
-            try:
-                self.WebSocketConnection.run_forever()
-            except Exception as e:
-                self.Logger.exception(e)
+        try:
+            self.WebSocketConnection.run_forever()
+        except Exception as e:
+            self.Logger.exception(e)
+
+    def on_open(self, _ws):
+        pass
 
     def on_message(self, _ws, msg):
         ts = int(time.time()*1000)
         rdk = self.Config['RedisCollectKey']
-        # self.Logger.debug(msg)
         self.RedisConnection.lpush(rdk, json.dumps([ts, msg]))
 
     def on_error(self, _ws, error):
-        self.Logger.exception(error)
+        self.Logger.error(error)
 
     def on_close(self, _ws):
         self.Logger.info('Connection closed.')
@@ -77,7 +79,6 @@ class Exchange(object):
             try:
                 if self.RedisConnection.llen(rdk) > 0:
                     data = json.loads(self.RedisConnection.rpop(rdk).decode('utf8'))
-                    # data[1] is timestamp
                     dt = datetime.datetime.fromtimestamp(data[1] / 1000, TIMEZONE)
                     calendar_path = '%4d/%02d/%02d' % (dt.year, dt.month, dt.day)
                     with open('%s/%s/%s' % (HOME_PATH, calendar_path, fn), 'a+') as csvFile:
@@ -122,24 +123,3 @@ class Exchange(object):
     @staticmethod
     def date_from_str(ts):
         return pytz.utc.localize(datetime.datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S.%fZ'))
-
-    # @staticmethod
-    # def float_list_compare(l1, l2):
-    #     if isinstance(l1, (float, int)) and isinstance(l2, (float, int)):
-    #         return abs(l1 - l2) < 1e-12
-    #     if isinstance(l1, str) and isinstance(l2, str):
-    #         return l1 == l2
-    #     if len(l1) != len(l2):
-    #         return False
-    #     if not l1 and not l2:
-    #         return True
-    #     return float_list_compare(l1[0], l2[0]) and float_list_compare(l1[1:], l2[1:])
-
-    # def check_duplicate_data(self):
-    #     rdk = self.Config['RedisQueueKey']
-    #     data = json.loads(self.RedisConnection.rpop(rdk).decode('utf8'))
-    #     ls = json.loads(self.RedisConnection.lrange(rdk, 0, -1).decode('utf8'))
-    #     for l in ls:
-    #         if configs.float_list_compare(data[1:], l[1:]):
-    #             return [True, data]
-    #     return [False, data]

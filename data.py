@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import argparse
 import ccws
 from ccws.configs import load_logger_config

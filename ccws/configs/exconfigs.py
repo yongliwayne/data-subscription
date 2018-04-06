@@ -1,4 +1,3 @@
-# coding=utf-8
 from ccws.configs.constants import ORDER_BOOK_DEPTH
 
 OrderBookHeaderWithDepth = sum([['bidp%d' % i, 'bidv%d' % i] for i in range(ORDER_BOOK_DEPTH)], []) \
@@ -148,7 +147,37 @@ GdaxConfigs = {
     },
 }
 
+
+GeminiConfigs = {
+    'BTC/USD': {
+       'trade': {
+            'Header': [
+                'tid',
+                'price',
+                'amount',
+                'makerSide',
+            ],
+            'FileName': 'BTC_USD-gemini.trade.csv',
+            'RedisCollectKey': 'gemini-BTC_USD-trade_raw',
+            'RedisOutputKey': 'gemini-BTC_USD-trade',
+            'DataHandler': 'process_trade_data',
+        },
+
+       'order': {
+            'Header': ['IsInitial'] + OrderBookHeaderWithDepth,
+            'FileName': 'BTC_USD-gemini.book.csv',
+            'RedisCollectKey': 'gemini-BTC_USD-order_raw',
+            'RedisOutputKey': 'gemini-BTC_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+}
+
+
 ExConfigs = {
-   'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
-   'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
+    'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
+    'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
+    'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/marketdata/']
 }

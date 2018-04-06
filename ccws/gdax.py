@@ -58,7 +58,7 @@ class Gdax(Exchange):
                         and abs((ask_v_new-ask_v_old)/ask_v_old) < v_change_threshold:
                     continue
                 [bid_p_old, bid_v_old, ask_p_old, ask_v_old] = [bid_p_new, bid_v_new, ask_p_new, ask_v_new]
-                ts = self.date_from_str(msg.get('time', '2010-01-01T00:00:01.000000Z'))
+                ts = self.date_from_str(msg.get('time'))
                 dt = self.fmt_date(ts.timestamp()*1000)
                 ts = int(ts.timestamp()*1000)
                 ty = 'N'
@@ -100,7 +100,7 @@ class Gdax(Exchange):
                 continue
             elif initiate:
                 data = [msg.get(k) for k in self.Config['Header']]
-                ts = self.date_from_str(msg.get('time', '2010-01-01T00:00:01.000000Z'))
+                ts = self.date_from_str(msg.get('time'))
                 dt = self.fmt_date(ts.timestamp()*1000)
                 ts = int(ts.timestamp()*1000)
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))

@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from ccws.configs.constants import HOME_PATH
 from ccws.configs.constants import REDIS_HOST
 from ccws.configs.constants import REDIS_CACHE_LENGTH
