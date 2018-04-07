@@ -35,8 +35,9 @@ class Exchange(object):
         self.Logger.info('Begin Connection')
         url = self._WebSocketAddress + kwargs.get('url_append', '')
         on_error = kwargs.get('on_error', self.on_error)
-        on_close = kwargs.get('on_error', self.on_close)
+        on_close = kwargs.get('on_close', self.on_close)
         on_message = kwargs.get('on_message', self.on_message)
+        [kwargs.pop(k) for k in ['url_append', 'on_error', 'on_close', 'on_message']]
         self.WebSocketConnection = websocket.WebSocketApp(
             url,
             on_error=on_error,
