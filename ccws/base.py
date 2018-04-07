@@ -33,10 +33,10 @@ class Exchange(object):
 
     def run_websocketapp(self, **kwargs):
         self.Logger.info('Begin Connection')
-        url = self._WebSocketAddress + kwargs.get('url_append', '')
-        on_error = kwargs.get('on_error', self.on_error)
-        on_close = kwargs.get('on_error', self.on_close)
-        on_message = kwargs.get('on_message', self.on_message)
+        url = self._WebSocketAddress + kwargs.pop('url_append', '')
+        on_error = kwargs.pop('on_error', self.on_error)
+        on_close = kwargs.pop('on_error', self.on_close)
+        on_message = kwargs.pop('on_message', self.on_message)
         self.WebSocketConnection = websocket.WebSocketApp(
             url,
             on_error=on_error,

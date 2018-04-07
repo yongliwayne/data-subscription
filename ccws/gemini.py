@@ -11,9 +11,10 @@ class Gemini(Exchange):
 
     def collect_data(self):
         self.connect_redis()
-        self.Logger.info('Subscription')
-        self.run_websocketapp()
- 
+        self.run_websocketapp(
+            url_append=self.Config['url_append']
+        )
+
     def process_order_book_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
