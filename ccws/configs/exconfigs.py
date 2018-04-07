@@ -149,6 +149,19 @@ GdaxConfigs = {
 }
 GeminiConfigs={
     'BTC/USD':{
+        'trade':{
+             'url_append': 'v1/marketdata/BTCUSD',
+             'Header': [
+                 'tid',
+                 'makerSide',
+                 'price',
+                 'amount',
+             ],
+             'FileName': 'BTC_USD-gemini.trade.csv',
+             'RedisCollectKey': 'gemini-BTC_USD-trade_raw',
+             'RedisOutputKey': 'gemini-BTC_USD-trade',
+             'DataHandler': 'process_gemini_trade_data', 
+        },
         'order':{
             'url_append': 'v1/marketdata/BTCUSD',
             'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth,

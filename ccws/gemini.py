@@ -15,6 +15,22 @@ class Gemini(Exchange):
             url_append=self.Config['url_append']
         )
 
+    def process_gemini_trade_data(self):
+        input_key = self.Config['RedisCollectKey']
+        output_key = self.Config['RedisOutputKey']
+        while True:
+            if self.RedisConnection.llen(input_key) <= REDIS_CACHE_LENGTH:
+                time.sleep(60)
+                continue
+            [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
+            msg = json.loads(msg)
+            ts, dt, events, ty = ct, '', msg.get('events', None), msg.get('type', None)
+            if ty == 'update' and events[0].get('type', None) == 'trade':
+                data = [events[0].get(k) for k in self.Config['Header']]
+                ts = msg.get('timestampms')
+                dt = self.fmt_date(ts)
+                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
+
     def process_order_book_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
