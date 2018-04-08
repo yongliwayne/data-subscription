@@ -12,13 +12,7 @@ from ccws.configs import ExConfigs
 
 def create_tomorrow_folder(path=''):
     tmr = datetime.datetime.fromtimestamp(time.time(), TIMEZONE)+datetime.timedelta(days=1)
-    filepath = '%s/%4d' % (path, tmr.year)
-    if not os.path.exists(filepath):
-        os.makedirs(filepath)
-    filepath += '/%02d' % tmr.month
-    if not os.path.exists(filepath):
-        os.makedirs(filepath)
-    filepath += '/%02d/' % tmr.day
+    filepath = '%s/%4d/%02d/%02d' % (path, tmr.year, tmr.month, tmr.day)
     if not os.path.exists(filepath):
         os.makedirs(filepath)
     return filepath

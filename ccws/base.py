@@ -33,11 +33,10 @@ class Exchange(object):
 
     def run_websocketapp(self, **kwargs):
         self.Logger.info('Begin Connection')
-        url = self._WebSocketAddress + kwargs.get('url_append', '')
-        on_error = kwargs.get('on_error', self.on_error)
-        on_close = kwargs.get('on_close', self.on_close)
-        on_message = kwargs.get('on_message', self.on_message)
-        [kwargs.pop(k) for k in ['url_append', 'on_error', 'on_close', 'on_message']]
+        url = self._WebSocketAddress + kwargs.pop('url_append', '')
+        on_error = kwargs.pop('on_error', self.on_error)
+        on_close = kwargs.pop('on_close', self.on_close)
+        on_message = kwargs.pop('on_message', self.on_message)
         self.WebSocketConnection = websocket.WebSocketApp(
             url,
             on_error=on_error,
@@ -99,6 +98,27 @@ class Exchange(object):
         self.connect_redis()
         getattr(self, self.Config.get('DataHandler', object))()
 
+    def _check_price_eq(self, p1, p2):
+        # divide by 2 to avoid precision
+        return abs(p1-p2) < self.Config['TickSize']/2
+
+    def _update_order_book(self, bids, asks, side, price, remaining):
+        if side == 'bid':
+            book = bids
+        else:
+            book = asks
+        for i in range(len(book)):
+            if self._check_price_eq(price, book[i][0]):
+                if remaining < self.Config['AmountMin']:
+                    del book[i]
+                else:
+                    book[i][1] = remaining
+                return
+            elif price < book[i][0]:
+                book.insert(i, [price, remaining])
+                return
+        book.insert(len(book), [price, remaining])
+
     @staticmethod
     def _cut_order_book(bids, asks):
         if len(bids) >= ORDER_BOOK_DEPTH:
@@ -123,24 +143,3 @@ class Exchange(object):
     @staticmethod
     def date_from_str(ts):
         return pytz.utc.localize(datetime.datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S.%fZ'))
-
-    # @staticmethod
-    # def float_list_compare(l1, l2):
-    #     if isinstance(l1, (float, int)) and isinstance(l2, (float, int)):
-    #         return abs(l1 - l2) < 1e-12
-    #     if isinstance(l1, str) and isinstance(l2, str):
-    #         return l1 == l2
-    #     if len(l1) != len(l2):
-    #         return False
-    #     if not l1 and not l2:
-    #         return True
-    #     return float_list_compare(l1[0], l2[0]) and float_list_compare(l1[1:], l2[1:])
-
-    # def check_duplicate_data(self):
-    #     rdk = self.Config['RedisQueueKey']
-    #     data = json.loads(self.RedisConnection.rpop(rdk).decode('utf8'))
-    #     ls = json.loads(self.RedisConnection.lrange(rdk, 0, -1).decode('utf8'))
-    #     for l in ls:
-    #         if configs.float_list_compare(data[1:], l[1:]):
-    #             return [True, data]
-    #     return [False, data]

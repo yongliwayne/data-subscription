@@ -51,7 +51,6 @@ HuobiConfigs = {
     },
 }
 
-
 GdaxConfigs = {
     'BTC/USD': {
         # 'order.received': {
@@ -148,7 +147,30 @@ GdaxConfigs = {
     },
 }
 
+__gemini_trade_info_header = [
+    'tid',
+    'makerSide',
+    'price',
+    'amount',
+]
+
+GeminiConfigs = {
+    'BTC/USD': {
+        'order': {
+            'url_append': '/marketdata/BTCUSD',
+            'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth + __gemini_trade_info_header,
+            'TradeInfoHeader': __gemini_trade_info_header,
+            'FileName': 'BTC_USD-gemini.book.csv',
+            'RedisCollectKey': 'gemini-BTC_USD_raw',
+            'RedisOutputKey': 'gemini-BTC_USD_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+}
 ExConfigs = {
-   'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
-   'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
+    'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
+    'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
+    'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
 }
