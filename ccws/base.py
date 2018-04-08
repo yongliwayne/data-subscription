@@ -143,24 +143,3 @@ class Exchange(object):
     @staticmethod
     def date_from_str(ts):
         return pytz.utc.localize(datetime.datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S.%fZ'))
-
-    # @staticmethod
-    # def float_list_compare(l1, l2):
-    #     if isinstance(l1, (float, int)) and isinstance(l2, (float, int)):
-    #         return abs(l1 - l2) < 1e-12
-    #     if isinstance(l1, str) and isinstance(l2, str):
-    #         return l1 == l2
-    #     if len(l1) != len(l2):
-    #         return False
-    #     if not l1 and not l2:
-    #         return True
-    #     return float_list_compare(l1[0], l2[0]) and float_list_compare(l1[1:], l2[1:])
-
-    # def check_duplicate_data(self):
-    #     rdk = self.Config['RedisQueueKey']
-    #     data = json.loads(self.RedisConnection.rpop(rdk).decode('utf8'))
-    #     ls = json.loads(self.RedisConnection.lrange(rdk, 0, -1).decode('utf8'))
-    #     for l in ls:
-    #         if configs.float_list_compare(data[1:], l[1:]):
-    #             return [True, data]
-    #     return [False, data]
