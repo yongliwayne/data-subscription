@@ -35,7 +35,7 @@ class Exchange(object):
         self.Logger.info('Begin Connection')
         url = self._WebSocketAddress + kwargs.pop('url_append', '')
         on_error = kwargs.pop('on_error', self.on_error)
-        on_close = kwargs.pop('on_error', self.on_close)
+        on_close = kwargs.pop('on_close', self.on_close)
         on_message = kwargs.pop('on_message', self.on_message)
         self.WebSocketConnection = websocket.WebSocketApp(
             url,
@@ -97,6 +97,27 @@ class Exchange(object):
     def process_data(self):
         self.connect_redis()
         getattr(self, self.Config.get('DataHandler', object))()
+
+    def _check_price_eq(self, p1, p2):
+        # divide by 2 to avoid precision
+        return abs(p1-p2) < self.Config['TickSize']/2
+
+    def _update_order_book(self, bids, asks, side, price, remaining):
+        if side == 'bid':
+            book = bids
+        else:
+            book = asks
+        for i in range(len(book)):
+            if self._check_price_eq(price, book[i][0]):
+                if remaining < self.Config['AmountMin']:
+                    del book[i]
+                else:
+                    book[i][1] = remaining
+                return
+            elif price < book[i][0]:
+                book.insert(i, [price, remaining])
+                return
+        book.insert(len(book), [price, remaining])
 
     @staticmethod
     def _cut_order_book(bids, asks):
