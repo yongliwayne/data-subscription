@@ -152,6 +152,7 @@ __gemini_trade_info_header = [
     'makerSide',
     'price',
     'amount',
+    'lasttime',
 ]
 
 GeminiConfigs = {
