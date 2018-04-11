@@ -133,6 +133,7 @@ class Exchange(object):
             book += asks[:ORDER_BOOK_DEPTH]
         else:
             book += asks + [['None', 'None']] * (ORDER_BOOK_DEPTH - len(asks))
+        book = [x[0:2] for x in book]
 
         return sum(book, [])
 
