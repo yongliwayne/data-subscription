@@ -48,9 +48,9 @@ class Bitmex(Exchange):
                 for event in events:
                     side = event.get('side', None)
                     if side == 'Buy':
-                        asks.append([float(event.get(k)) for k in ['price', 'size', 'id']])
-                    elif side == 'Sell':
                         bids.append([float(event.get(k)) for k in ['price', 'size', 'id']])
+                    elif side == 'Sell':
+                        asks.append([float(event.get(k)) for k in ['price', 'size', 'id']])
                 bids.sort(key=lambda x: x[0])
                 asks.sort(key=lambda x: x[0])
                 book = self._cut_order_book(bids, asks)
@@ -58,30 +58,32 @@ class Bitmex(Exchange):
                 initialized = True
             elif initialized:
                 for event in events:
-                    if ty == 'update':
-                        self._update_order_book(bids, asks, event['side'], ty, None, float(event['size']), float(event['id']))
-                    elif ty == 'delete':
-                        self._update_order_book(bids, asks, event['side'], ty, None, 0, float(event['id']))
-                    elif ty == 'insert':
-                        self._update_order_book(bids, asks, event['side'], ty, float(event['price']), float(event['size']), float(event['id']))
+                    feature = [event.get(k, None) for k in ['side', 'price', 'size', 'id']]
+                    self._update_order_book(bids, asks, feature, ty)
                     book = self._cut_order_book(bids, asks)
                     if book == book_pre:
                         continue
                     book_pre = book
                     self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book))
 
-    def _update_order_book(self, bids, asks, side, ty, price, size, id):
+    def _update_order_book(self, bids, asks, side, feature, ty):
+        [side, price, size, id] = feature
         if side == 'Sell':
             book = bids
         else:
             book = asks
-        if ty == 'update' or ty == 'delete':
+        if ty == 'update':
             for i in range(len(book)):
                 if int(id) == int(book[i][2]):
                     if size < self.Config['AmountMin']:
                         del book[i]
                     else:
                         book[i][1] = size
+                    return
+        elif ty == 'delete':
+            for i in range(len(book)):
+                if int(id) == int(book[i][2]):
+                    del book[i]
                     return
         elif ty == 'insert':
             for i in range(len(book)):
