@@ -152,7 +152,6 @@ __gemini_trade_info_header = [
     'makerSide',
     'price',
     'amount',
-    'lasttime',
 ]
 
 GeminiConfigs = {
@@ -170,46 +169,8 @@ GeminiConfigs = {
         },
     },
 }
-
-BitmexConfigs = {
-    'BTC/USD': {
-        'trade': {
-            'Subscription':{
-                'op': 'subscribe',
-                'args': ["orderBookL2:XBTUSD"],
-            },
-            'Header': [
-                'side',
-                'size',
-                'price',
-                'tickDirection',
-                'trdMatchID',
-                'grossValue',
-                'homeNotional',
-                'foreignNotional',
-            ],
-            'FileName': 'BTC_USD-bitmex.trade.csv',
-            'RedisCollectKey': 'bitmex-BTC_USD-trade_raw',
-            'RedisOutputKey': 'bitmex-BTC_USD-trade_processed',
-            'DataHandler': 'process_trade_data',
-        },
-        'order': {
-            'Subscription':{
-                'op': 'subscribe',
-                'args': ["orderBookL2:XBTUSD"],
-            },
-            'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth,
-            'FileName': 'BTC_USD-bitmex.book.csv',
-            'RedisCollectKey': 'bitmex-BTC_USD-order_raw',
-            'RedisOutputKey': 'bitmex-BTC_USD-order_processed',
-            'DataHandler': 'process_order_data',
-            'AmountMin': 1e-8,
-        },
-    },
-}
 ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
     'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
-    'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
 }

@@ -62,9 +62,6 @@ class Gemini(Exchange):
                         dt = self.fmt_date(ts)
                         self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book + trade_info))
                     elif event['type'] == 'trade':
-                        header = self.Config['TradeInfoHeader']
-                        header.remove('lasttime')
-                        trade_info = [event.get(k) for k in header]
-                        trade_info.append(ts)
+                        trade_info = [event.get(k) for k in self.Config['TradeInfoHeader']]
                     else:
                         self.Logger.info('un-processed event %s' % event)
