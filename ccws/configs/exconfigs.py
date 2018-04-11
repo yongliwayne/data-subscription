@@ -174,6 +174,10 @@ GeminiConfigs = {
 BitmexConfigs = {
     'BTC/USD': {
         'trade': {
+            'Subscription':{
+                'op': 'subscribe',
+                'args': ["orderBookL2:XBTUSD"],
+            },
             'Header': [
                 'side',
                 'size',
@@ -192,7 +196,7 @@ BitmexConfigs = {
         'order': {
             'Subscription':{
                 'op': 'subscribe',
-                'args': ["orderBookL2:BTCUSD"],
+                'args': ["orderBookL2:XBTUSD"],
             },
             'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth,
             'FileName': 'BTC_USD-bitmex.book.csv',
