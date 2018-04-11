@@ -1,8 +1,11 @@
 # coding=utf-8
-from ccws.configs.constants import ORDER_BOOK_DEPTH
+from ccws.configs.constants import ORDER_BOOK_DEPTH, ORDER_BOOK10_DEPTH
 
 OrderBookHeaderWithDepth = sum([['bidp%d' % i, 'bidv%d' % i] for i in range(ORDER_BOOK_DEPTH)], []) \
                            + sum([['askp%d' % i, 'askv%d' % i] for i in range(ORDER_BOOK_DEPTH)], [])
+
+OrderBookHeaderWithDepth10 = sum([['bidp%d' % i, 'bidv%d' % i] for i in range(ORDER_BOOK10_DEPTH)], []) \
+                           + sum([['askp%d' % i, 'askv%d' % i] for i in range(ORDER_BOOK10_DEPTH)], [])
 
 HuobiConfigs = {
     'BTC/USDT': {
@@ -204,6 +207,17 @@ BitmexConfigs = {
             'RedisOutputKey': 'bitmex-BTC_USD-order_processed',
             'DataHandler': 'process_order_data',
             'AmountMin': 1e-8,
+        },
+        'orderbook10': {
+            'Subscription':{
+                'op': 'subscribe',
+                'args': ["orderBook10:XBTUSD"],
+            },
+            'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth10,
+            'FileName': 'BTC_USD-bitmex.book10.csv',
+            'RedisCollectKey': 'bitmex-BTC_USD-orderBook10_raw',
+            'RedisOutputKey': 'bitmex-BTC_USD-orderBook10_processed',
+            'DataHandler': 'process_orderBook10_data',
         },
     },
 }
