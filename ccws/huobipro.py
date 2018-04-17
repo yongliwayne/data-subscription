@@ -5,7 +5,6 @@ import gzip
 import time
 from ccws import Exchange
 from ccws.configs import REDIS_CACHE_LENGTH
-from ccws.configs import ORDER_BOOK_DEPTH
 
 
 class Huobipro(Exchange):
@@ -37,8 +36,8 @@ class Huobipro(Exchange):
     def process_order_book_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
-        dump = ['None'] * (ORDER_BOOK_DEPTH * 4)
-        check_index = [0, 1, 2*ORDER_BOOK_DEPTH, 2*ORDER_BOOK_DEPTH+1]
+        dump = ['None'] * (12 * 4)
+        check_index = [0, 1, 2 * 12, 2 * 12 + 1]
         while True:
             if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
                 time.sleep(60)

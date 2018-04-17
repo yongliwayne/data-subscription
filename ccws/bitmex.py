@@ -11,20 +11,16 @@ class Bitmex(Exchange):
 
     def collect_data(self):
         self.connect_redis()
-        #rdk = self.Config['RedisCollectKey']
-        #rdk_order='bitmex-BTC_USD-order_raw'
-        #rdk_trade='bitmex-BTC_USD-trade_raw'
-        #fd=open('bitmex-data.dat','r')
-        #for msg in fd:
-        #    msg=json.loads(msg)
-        #    if msg.get('table', None) == 'trade':
-        #        self.RedisConnection.lpush(rdk_trade, json.dumps(msg))
-        #    elif msg.get('table', None) == 'orderBookL2':
-        #        self.RedisConnection.lpush(rdk_order, json.dumps(msg))
-        #fd.close()
         self.run_websocketapp(
             on_open=self.on_open,
         )
+        #fd = open('bitmex_order10', 'r')
+        #rdk = self.Config.get('RedisCollectKey')
+        #for msg in fd:
+        #    if msg == 'open\n' or msg == 'close\n':
+        #        continue
+        #    self.RedisConnection.lpush(rdk, json.dumps([1, msg]))
+        #fd.close()
 
     def on_open(self, ws):
         ws.send(json.dumps(self.Config['Subscription']))
@@ -33,31 +29,24 @@ class Bitmex(Exchange):
     def process_orderBook10_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
-        initialized = False
-        asks, bids = [], []
         while True:
             if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             msg = json.loads(msg)
-            ty, data = msg.get('action', None), msg.get('data', None)
-            data = data[0]
-            ts = self.date_from_str(data.get('timestamp','2010-01-01T00:00:01.000000Z'))
-            dt = self.fmt_date(ts.timestamp() * 1000)
-            ts = int(ts.timestamp() * 1000)
-            if ty == 'partial' and not initialized:
-                initialized = True
-            if initialized:
+            if msg.get('action', None) == 'update':
+                data = msg.get('data', None)
+                data = data[0]
+                ts = self.date_from_str(data.get('timestamp','2010-01-01T00:00:01.000000Z'))
+                dt = self.fmt_date(ts.timestamp() * 1000)
+                ts = int(ts.timestamp() * 1000)
                 asks, bids = data.get('asks'), data.get('bids')
                 bids.sort(key=lambda x: x[0], reverse=True)
                 asks.sort(key=lambda x: x[0])
                 book = bids + asks
-                if ty == 'partial':
-                    ty = 'Y'
-                else:
-                    ty = 'N'
-                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, ty] + book))
+                book = sum(book, [])
+                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + book))
 
     def process_order_data(self):
         input_key = self.Config['RedisCollectKey']

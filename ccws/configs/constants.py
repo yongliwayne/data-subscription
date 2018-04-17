@@ -11,6 +11,3 @@ else:
 
 REDIS_CACHE_LENGTH = 100        # leave a buffer to debug, in case connection stop
 
-ORDER_BOOK_DEPTH = 12
-
-ORDER_BOOK10_DEPTH = 10

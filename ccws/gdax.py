@@ -3,7 +3,6 @@
 import json
 import time
 from ccws.configs import REDIS_CACHE_LENGTH
-from ccws.configs import ORDER_BOOK_DEPTH
 from ccws import Exchange
 
 
@@ -25,7 +24,7 @@ class Gdax(Exchange):
         output_key = self.Config['RedisOutputKey']
         initiate = False
         asks, bids = [], []
-        check_index = [0, 1, 2 * ORDER_BOOK_DEPTH, 2 * ORDER_BOOK_DEPTH + 1]
+        check_index = [0, 1, 2 * 12, 2 * 12 + 1]
         bid_p_old, bid_v_old, ask_p_old, ask_v_old = -1, -1, -1, -1
         v_change_threshold = 0.1
         while True:
