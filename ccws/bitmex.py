@@ -2,7 +2,6 @@
 
 import json
 import time
-from ccws.configs import REDIS_CACHE_LENGTH
 from ccws import Exchange
 
 
@@ -30,7 +29,7 @@ class Bitmex(Exchange):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
         while True:
-            if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
+            if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
@@ -84,38 +83,38 @@ class Bitmex(Exchange):
     #                 book_pre = book
     #                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book))
 
-    def _update_order_book(self, bids, asks, side, feature, ty):
-        [side, price, size, id] = feature
-        if side == 'Sell':
-            book = bids
-        else:
-            book = asks
-        if ty == 'update':
-            for i in range(len(book)):
-                if int(id) == int(book[i][2]):
-                    if size < self.Config['AmountMin']:
-                        del book[i]
-                    else:
-                        book[i][1] = size
-                    return
-        elif ty == 'delete':
-            for i in range(len(book)):
-                if int(id) == int(book[i][2]):
-                    del book[i]
-                    return
-        elif ty == 'insert':
-            for i in range(len(book)):
-                if price < book[i][0]:
-                    book.insert(i, [price, size, id])
-                    return
-            book.insert(len(book), [price, size, id])
+    # def _update_order_book(self, bids, asks, side, feature, ty):
+    #     [side, price, size, id] = feature
+    #     if side == 'Sell':
+    #         book = bids
+    #     else:
+    #         book = asks
+    #     if ty == 'update':
+    #         for i in range(len(book)):
+    #             if int(id) == int(book[i][2]):
+    #                 if size < self.Config['AmountMin']:
+    #                     del book[i]
+    #                 else:
+    #                     book[i][1] = size
+    #                 return
+    #     elif ty == 'delete':
+    #         for i in range(len(book)):
+    #             if int(id) == int(book[i][2]):
+    #                 del book[i]
+    #                 return
+    #     elif ty == 'insert':
+    #         for i in range(len(book)):
+    #             if price < book[i][0]:
+    #                 book.insert(i, [price, size, id])
+    #                 return
+    #         book.insert(len(book), [price, size, id])
 
     def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
         initiate = False
         while True:
-            if self.RedisConnection.llen(input_key) <= REDIS_CACHE_LENGTH:
+            if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))

@@ -4,7 +4,6 @@ import json
 import gzip
 import time
 from ccws import Exchange
-from ccws.configs import REDIS_CACHE_LENGTH
 
 
 class Huobipro(Exchange):
@@ -38,7 +37,7 @@ class Huobipro(Exchange):
         output_key = self.Config['RedisOutputKey']
         book_pre = []
         while True:
-            if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
+            if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
@@ -60,7 +59,7 @@ class Huobipro(Exchange):
         output_key = self.Config['RedisOutputKey']
         dump = []
         while True:
-            if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
+            if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
