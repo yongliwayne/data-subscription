@@ -230,5 +230,5 @@ ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
     'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
-    'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime']
+    'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
 }
