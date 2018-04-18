@@ -18,7 +18,7 @@ class Bitmex(Exchange):
         ws.send(json.dumps(self.Config['Subscription']))
         self.Logger.info('Subscription')
 
-    def process_orderBook10_data(self):
+    def process_order_book_10_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
         while True:
@@ -30,7 +30,7 @@ class Bitmex(Exchange):
             if msg.get('action', None) == 'update':
                 data = msg.get('data', None)
                 data = data[0]
-                ts = self.date_from_str(data.get('timestamp','2010-01-01T00:00:01.000000Z'))
+                ts = self.date_from_str(data.get('timestamp', '2010-01-01T00:00:01.000000Z'))
                 dt = self.fmt_date(ts.timestamp() * 1000)
                 ts = int(ts.timestamp() * 1000)
                 asks, bids = data.get('asks'), data.get('bids')
@@ -39,7 +39,6 @@ class Bitmex(Exchange):
                 book = bids + asks
                 book = sum(book, [])
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + book))
-
 
     def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
@@ -61,4 +60,3 @@ class Bitmex(Exchange):
                     dt = self.fmt_date(ts.timestamp() * 1000)
                     ts = int(ts.timestamp() * 1000)
                     self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
-

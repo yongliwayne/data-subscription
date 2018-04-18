@@ -1,9 +1,10 @@
 # coding=utf-8
 
 
-def OrderBookHeaderWithDepth(depth):
+def order_book_header_with_depth(depth):
     return sum([['bidp%d' % i, 'bidv%d' % i] for i in range(depth)], []) \
-                           + sum([['askp%d' % i, 'askv%d' % i] for i in range(depth)], [])
+           + sum([['askp%d' % i, 'askv%d' % i] for i in range(depth)], [])
+
 
 HuobiConfigs = {
     'BTC/USDT': {
@@ -44,7 +45,7 @@ HuobiConfigs = {
                 'id': 'hubiproorderbook',
             },
             'OrderBookDepth': 12,
-            'Header': OrderBookHeaderWithDepth(12),
+            'Header': order_book_header_with_depth(12),
             'FileName': 'BTC_USDT-huobipro.book.csv',
             'RedisCollectKey': 'huobipro-BTC_USDT-order_raw',
             'RedisOutputKey': 'huobipro-BTC_USDT-order_processed',
@@ -138,7 +139,7 @@ GdaxConfigs = {
                 'channels': [{'name': 'level2', 'product_ids': ['BTC-USD']}],
             },
             'OrderBookDepth': 12,
-            'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth(12),
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
             'FileName': 'BTC_USD-gdax.book.csv',
             'RedisCollectKey': 'gdax-BTC_USD-order_raw',
             'RedisOutputKey': 'gdax-BTC_USD-order_processed',
@@ -150,21 +151,21 @@ GdaxConfigs = {
     },
 }
 
-__gemini_trade_info_header = [
+_gemini_trade_info_header = [
     'tid',
     'makerSide',
     'price',
     'amount',
-    'lasttime',
 ]
 
+# noinspection PyPep8
 GeminiConfigs = {
     'BTC/USD': {
         'order': {
             'url_append': '/marketdata/BTCUSD',
             'OrderBookDepth': 12,
-            'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth(12) + __gemini_trade_info_header,
-            'TradeInfoHeader': __gemini_trade_info_header,
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12) + _gemini_trade_info_header + ['lasttradetime'],
+            'TradeInfoHeader': _gemini_trade_info_header,
             'FileName': 'BTC_USD-gemini.book.csv',
             'RedisCollectKey': 'gemini-BTC_USD_raw',
             'RedisOutputKey': 'gemini-BTC_USD_processed',
@@ -178,7 +179,7 @@ GeminiConfigs = {
 BitmexConfigs = {
     'BTC/USD': {
         'trade': {
-            'Subscription':{
+            'Subscription': {
                 'op': 'subscribe',
                 'args': ["orderBookL2:XBTUSD"],
             },
@@ -198,7 +199,7 @@ BitmexConfigs = {
             'DataHandler': 'process_trade_data',
         },
 
-        #'order': {
+        # 'order': {
         #    'Subscription':{
         #        'op': 'subscribe',
         #        'args': ["orderBookL2:XBTUSD"],
@@ -209,18 +210,18 @@ BitmexConfigs = {
         #    'RedisOutputKey': 'bitmex-BTC_USD-order_processed',
         #    'DataHandler': 'process_order_data',
         #    'AmountMin': 1e-8,
-        #},
+        # },
 
         'orderbook10': {
-            'Subscription':{
+            'Subscription': {
                 'op': 'subscribe',
                 'args': ["orderBook10:XBTUSD"],
             },
-            'Header': OrderBookHeaderWithDepth(10),
-            'FileName': 'BTC_USD-bitmex.book10.csv',
+            'Header': order_book_header_with_depth(10),
+            'FileName': 'BTC_USD-bitmex.book.csv',
             'RedisCollectKey': 'bitmex-BTC_USD-orderBook10_raw',
             'RedisOutputKey': 'bitmex-BTC_USD-orderBook10_processed',
-            'DataHandler': 'process_orderBook10_data',
+            'DataHandler': 'process_order_book_10_data',
         },
     },
 }
