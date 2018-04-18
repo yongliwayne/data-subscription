@@ -36,8 +36,7 @@ class Huobipro(Exchange):
     def process_order_book_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
-        dump = ['None'] * (12 * 4)
-        check_index = [0, 1, 2 * 12, 2 * 12 + 1]
+        book_pre = []
         while True:
             if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
                 time.sleep(60)
@@ -50,13 +49,11 @@ class Huobipro(Exchange):
             bids.sort(key=lambda x: x[0])
             asks.sort(key=lambda x: x[0])
             book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
-            # only care best bid and ask change
-            # no worry of precision at this time
-            if [dump[i] for i in check_index] == [book[i] for i in check_index]:
+            if book_pre == book:
                 continue
+            book_pre = book
             dt = self.fmt_date(ts)
             self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + book))
-            dump = book
 
     def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
