@@ -102,7 +102,7 @@ class Exchange(object):
         return abs(p1-p2) < self.Config['TickSize']/2
 
     def _update_order_book(self, bids, asks, side, price, remaining):
-        if side == 'bid':
+        if side in ['bid', 'buy']:
             book = bids
         else:
             book = asks
