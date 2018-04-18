@@ -13,7 +13,6 @@ from ccws.configs import REDIS_HOST
 from ccws.configs import TIMEZONE
 from ccws.configs import ExConfigs
 from ccws.configs import HOME_PATH
-from ccws.configs import ORDER_BOOK_DEPTH
 
 
 class Exchange(object):
@@ -120,19 +119,20 @@ class Exchange(object):
         book.insert(len(book), [price, remaining])
 
     @staticmethod
-    def _cut_order_book(bids, asks):
-        if len(bids) >= ORDER_BOOK_DEPTH:
-            book = bids[-ORDER_BOOK_DEPTH:]
+    def _cut_order_book(bids, asks, depth):
+        if len(bids) >= depth:
+            book = bids[-depth:]
             book.reverse()
         else:
             book = copy.deepcopy(bids)
             book.reverse()
-            book += [['None', 'None']] * (ORDER_BOOK_DEPTH - len(bids))
+            book += [['None', 'None']] * (depth - len(bids))
 
-        if len(asks) >= ORDER_BOOK_DEPTH:
-            book += asks[:ORDER_BOOK_DEPTH]
+        if len(asks) >= depth:
+            book += asks[:depth]
         else:
-            book += asks + [['None', 'None']] * (ORDER_BOOK_DEPTH - len(asks))
+            book += asks + [['None', 'None']] * (depth - len(asks))
+        book = [x[0:2] for x in book]
 
         return sum(book, [])
 
