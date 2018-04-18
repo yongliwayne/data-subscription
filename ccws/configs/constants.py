@@ -9,6 +9,6 @@ if os.path.exists('/data/'):
 else:
     HOME_PATH = '%s/data/subscription/cryptocurrency' % os.path.expanduser('~')
 
-REDIS_CACHE_LENGTH = -1       # leave a buffer to debug, in case connection stop
+REDIS_CACHE_LENGTH = 100       # leave a buffer to debug, in case connection stop
 
 ORDER_BOOK_DEPTH = 12

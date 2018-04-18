@@ -30,8 +30,9 @@ class Gdax(Exchange):
         v_change_threshold = 0.1
         while True:
             if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
-                time.sleep(60)
-                continue
+                #time.sleep(60)
+                #continue
+                break
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             msg = json.loads(msg)
             ts, dt, ty = ct, '', msg.get('type', None)

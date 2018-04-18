@@ -1,14 +1,12 @@
-import ccws
 from ccws.test.test_base import Test
+import unittest
 
 
-class TestGemini(Test):
+class TestGemini(Test, unittest.TestCase):
 
     def test(self, fn):
-        ex = ccws.Gemini()
-        ex.set_market('BTC/USD', 'order')
-        self.write_into_redis(ex, 'gemini_data')
-        self.process_data(ex)
-        self.write_into_csv(ex, fn)
-        origin_fn = 'gemini_origin.csv'
+        #self.write_into_redis('gemini_data.gz')
+        #self.process_data()
+        #self.write_into_csv(fn)
+        origin_fn = 'gemini_origin.csv.gz'
         self.test_write_data_csv(fn, origin_fn)
