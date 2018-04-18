@@ -181,7 +181,7 @@ BitmexConfigs = {
         'trade': {
             'Subscription': {
                 'op': 'subscribe',
-                'args': ["orderBookL2:XBTUSD"],
+                'args': ["trade:XBTUSD"],
             },
             'Header': [
                 'side',

@@ -43,20 +43,16 @@ class Bitmex(Exchange):
     def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
-        initiate = False
         while True:
             if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             msg = json.loads(msg)
-            ty, events = msg.get('action', None), msg.get('data', None)
-            if ty == 'partial':
-                initiate = True
-            if initiate:
-                for event in events:
-                    data = [event.get(k) for k in self.Config['Header']]
-                    ts = self.date_from_str(event.get('timestamp', '2010-01-01T00:00:01.000000Z'))
-                    dt = self.fmt_date(ts.timestamp() * 1000)
-                    ts = int(ts.timestamp() * 1000)
-                    self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
+            events = msg.get('data', [])
+            for event in events:
+                data = [event.get(k) for k in self.Config['Header']]
+                ts = self.date_from_str(event.get('timestamp', '2010-01-01T00:00:01.000000Z'))
+                dt = self.fmt_date(ts.timestamp() * 1000)
+                ts = int(ts.timestamp() * 1000)
+                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
