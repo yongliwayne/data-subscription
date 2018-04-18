@@ -43,6 +43,7 @@ HuobiConfigs = {
                 'sub': 'market.btcusdt.depth.step0',
                 'id': 'hubiproorderbook',
             },
+            'OrderBookDepth': 12,
             'Header': OrderBookHeaderWithDepth(12),
             'FileName': 'BTC_USDT-huobipro.book.csv',
             'RedisCollectKey': 'huobipro-BTC_USDT-order_raw',
@@ -136,6 +137,7 @@ GdaxConfigs = {
                 'type': 'subscribe',
                 'channels': [{'name': 'level2', 'product_ids': ['BTC-USD']}],
             },
+            'OrderBookDepth': 12,
             'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth(12),
             'FileName': 'BTC_USD-gdax.book.csv',
             'RedisCollectKey': 'gdax-BTC_USD-order_raw',
@@ -160,6 +162,7 @@ GeminiConfigs = {
     'BTC/USD': {
         'order': {
             'url_append': '/marketdata/BTCUSD',
+            'OrderBookDepth': 12,
             'Header': ['IsSnapShot'] + OrderBookHeaderWithDepth(12) + __gemini_trade_info_header,
             'TradeInfoHeader': __gemini_trade_info_header,
             'FileName': 'BTC_USD-gemini.book.csv',

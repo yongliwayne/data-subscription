@@ -24,9 +24,7 @@ class Gdax(Exchange):
         output_key = self.Config['RedisOutputKey']
         initiate = False
         asks, bids = [], []
-        check_index = [0, 1, 2 * 12, 2 * 12 + 1]
-        bid_p_old, bid_v_old, ask_p_old, ask_v_old = -1, -1, -1, -1
-        v_change_threshold = 0.1
+        book_pre = []
         while True:
             if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
                 time.sleep(60)
@@ -42,21 +40,16 @@ class Gdax(Exchange):
                 dt = self.fmt_date(ts)
                 ty = 'Y'
                 initiate = True
-                book = self._cut_order_book(bids, asks)
+                book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, ty] + book))
             elif initiate and ty == 'l2update':
                 changes = msg.get('changes', [])
                 for change in changes:
                     self._update_order_book(bids, asks, change[0], float(change[1]), float(change[2]))
-                book = self._cut_order_book(bids, asks)
-                # only care best bid and ask change
-                [bid_p_new, bid_v_new, ask_p_new, ask_v_new] = [book[i] for i in check_index]
-                if self._check_price_eq(bid_p_old, bid_p_new) \
-                        and self._check_price_eq(ask_p_old, ask_p_new) \
-                        and abs((bid_v_new - bid_v_old) / bid_v_old) < v_change_threshold \
-                        and abs((ask_v_new - ask_v_old) / ask_v_old) < v_change_threshold:
+                book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
+                if book == book_pre:
                     continue
-                [bid_p_old, bid_v_old, ask_p_old, ask_v_old] = [bid_p_new, bid_v_new, ask_p_new, ask_v_new]
+                book_pre = book
                 ts = self.date_from_str(msg.get('time', '2010-01-01T00:00:01.000000Z'))
                 dt = self.fmt_date(ts.timestamp() * 1000)
                 ts = int(ts.timestamp() * 1000)

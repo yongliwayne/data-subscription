@@ -49,7 +49,7 @@ class Huobipro(Exchange):
             bids, asks = tick.get('bids', [[]]), tick.get('asks', [[]])
             bids.sort(key=lambda x: x[0])
             asks.sort(key=lambda x: x[0])
-            book = self._cut_order_book(bids, asks)
+            book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
             # only care best bid and ask change
             # no worry of precision at this time
             if [dump[i] for i in check_index] == [book[i] for i in check_index]:

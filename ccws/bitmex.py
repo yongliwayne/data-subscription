@@ -48,41 +48,41 @@ class Bitmex(Exchange):
                 book = sum(book, [])
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + book))
 
-    def process_order_data(self):
-        input_key = self.Config['RedisCollectKey']
-        output_key = self.Config['RedisOutputKey']
-        initialized = False
-        asks, bids = [], []
-        book_pre = []
-        while True:
-            if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
-                time.sleep(60)
-                continue
-            [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
-            msg = json.loads(msg)
-            ts, ty, events = ct, msg.get('action', None), msg.get('data', None)
-            dt = self.fmt_date(ts)
-            if ty == 'partial' and not initialized:
-                for event in events:
-                    side = event.get('side', None)
-                    if side == 'Buy':
-                        bids.append([float(event.get(k)) for k in ['price', 'size', 'id']])
-                    elif side == 'Sell':
-                        asks.append([float(event.get(k)) for k in ['price', 'size', 'id']])
-                bids.sort(key=lambda x: x[0])
-                asks.sort(key=lambda x: x[0])
-                book = self._cut_order_book(bids, asks)
-                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'Y'] + book))
-                initialized = True
-            elif initialized:
-                for event in events:
-                    feature = [event.get(k, None) for k in ['side', 'price', 'size', 'id']]
-                    self._update_order_book(bids, asks, feature, ty)
-                    book = self._cut_order_book(bids, asks)
-                    if book == book_pre:
-                        continue
-                    book_pre = book
-                    self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book))
+    # def process_order_data(self):
+    #     input_key = self.Config['RedisCollectKey']
+    #     output_key = self.Config['RedisOutputKey']
+    #     initialized = False
+    #     asks, bids = [], []
+    #     book_pre = []
+    #     while True:
+    #         if self.RedisConnection.llen(input_key) < REDIS_CACHE_LENGTH:
+    #             time.sleep(60)
+    #             continue
+    #         [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
+    #         msg = json.loads(msg)
+    #         ts, ty, events = ct, msg.get('action', None), msg.get('data', None)
+    #         dt = self.fmt_date(ts)
+    #         if ty == 'partial' and not initialized:
+    #             for event in events:
+    #                 side = event.get('side', None)
+    #                 if side == 'Buy':
+    #                     bids.append([float(event.get(k)) for k in ['price', 'size', 'id']])
+    #                 elif side == 'Sell':
+    #                     asks.append([float(event.get(k)) for k in ['price', 'size', 'id']])
+    #             bids.sort(key=lambda x: x[0])
+    #             asks.sort(key=lambda x: x[0])
+    #             book = self._cut_order_book(bids, asks)
+    #             self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'Y'] + book))
+    #             initialized = True
+    #         elif initialized:
+    #             for event in events:
+    #                 feature = [event.get(k, None) for k in ['side', 'price', 'size', 'id']]
+    #                 self._update_order_book(bids, asks, feature, ty)
+    #                 book = self._cut_order_book(bids, asks)
+    #                 if book == book_pre:
+    #                     continue
+    #                 book_pre = book
+    #                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book))
 
     def _update_order_book(self, bids, asks, side, feature, ty):
         [side, price, size, id] = feature

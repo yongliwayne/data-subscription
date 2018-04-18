@@ -119,19 +119,19 @@ class Exchange(object):
         book.insert(len(book), [price, remaining])
 
     @staticmethod
-    def _cut_order_book(bids, asks):
-        if len(bids) >= 12:
-            book = bids[-12:]
+    def _cut_order_book(bids, asks, depth):
+        if len(bids) >= depth:
+            book = bids[-depth:]
             book.reverse()
         else:
             book = copy.deepcopy(bids)
             book.reverse()
-            book += [['None', 'None']] * (12 - len(bids))
+            book += [['None', 'None']] * (depth - len(bids))
 
-        if len(asks) >= 12:
-            book += asks[:12]
+        if len(asks) >= depth:
+            book += asks[:depth]
         else:
-            book += asks + [['None', 'None']] * (12 - len(asks))
+            book += asks + [['None', 'None']] * (depth - len(asks))
         book = [x[0:2] for x in book]
 
         return sum(book, [])
