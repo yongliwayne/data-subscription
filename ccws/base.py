@@ -86,7 +86,7 @@ class Exchange(object):
                         csvwriter = csv.writer(csvFile)
                         csvwriter.writerow(data)
                 else:
-                    time.sleep(1)
+                    time.sleep(60)
             except Exception as e:
                 self.Logger.exception(e)
                 error_count -= 1

@@ -25,15 +25,8 @@ class Gemini(Exchange):
         ss_pre = -1
         while True:
             if self.RedisConnection.llen(input_key) < 1:
-                time.sleep(1)
+                time.sleep(60)
                 continue
-            tmp1 = self.RedisConnection.rpop(input_key)
-            print(type(tmp1))
-            print(tmp1)
-            tmp =  (json.loads(tmp1.decode('utf-8')))
-            print(tmp)
-            print(len(tmp))
-            print(type(tmp))
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             msg = json.loads(msg)
             if msg.get('type') != 'update':

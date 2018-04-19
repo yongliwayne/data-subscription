@@ -20,11 +20,7 @@ class Test(unittest.TestCase):
         rdk = self.ex.Config.get('RedisCollectKey')
         fd = gzip.open(fn, 'rt')
         for msg in fd:
-            # msg = msg.decode('utf-8').strip('\n')
-            print(msg)
             msg = json.loads(msg)
-            json.loads()
-            print(type(msg))
             self.ex.RedisConnection.lpush(rdk, json.dumps(msg))
         fd.close()
 

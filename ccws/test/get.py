@@ -16,7 +16,7 @@ sub = {
 
 def on_message(ws, msg):
     ts = int(time.time() * 1000)
-    print([ts, msg])
+    print(json.dumps([ts, msg]))
 
 def on_open(ws):
     pass
