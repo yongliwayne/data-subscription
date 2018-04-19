@@ -16,7 +16,7 @@ def main():
                     if exchange == 'Gemini' and mode == 'order':
                         subprocess.call(run_str % (exchange, currency, mode, func), shell=True)
 
-    time.sleep(20)
+    time.sleep(150)
 
     for func in ['write_into_redis', 'process_data', 'write_into_csv']:
         for exchange, values in ExConfigs.items():
