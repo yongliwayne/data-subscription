@@ -80,8 +80,6 @@ class Exchange(object):
                     # data[1] is timestamp
                     dt = datetime.datetime.fromtimestamp(data[1] / 1000, TIMEZONE)
                     calendar_path = '%4d/%02d/%02d' % (dt.year, dt.month, dt.day)
-                    if dt.year == 1970:
-                        print (data)
                     with open('%s/%s/%s' % (HOME_PATH, calendar_path, fn), 'a+') as csvFile:
                         csvwriter = csv.writer(csvFile)
                         csvwriter.writerow(data)
