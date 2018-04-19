@@ -2,7 +2,6 @@
 
 import json
 import time
-from ccws.configs import REDIS_CACHE_LENGTH
 from ccws import Exchange
 
 
@@ -41,7 +40,7 @@ class Gemini(Exchange):
                     alias.append([float(event.get(k)) for k in ['price', 'remaining']])
                 bids.sort(key=lambda x: x[0])
                 asks.sort(key=lambda x: x[0])
-                book = self._cut_order_book(bids, asks)
+                book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
                 dt = self.fmt_date(ts)
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'Y'] + book + trade_info))
                 initialized = True
@@ -54,7 +53,7 @@ class Gemini(Exchange):
                     if event['type'] == 'change':
                         self._update_order_book(bids, asks,
                                                 event['side'], float(event['price']), float(event['remaining']))
-                        book = self._cut_order_book(bids, asks)
+                        book = self._cut_order_book(bids, asks, self.Config['OrderBookDepth'])
                         # only care best bid and ask change
                         if book == book_pre:
                             continue
@@ -62,9 +61,7 @@ class Gemini(Exchange):
                         dt = self.fmt_date(ts)
                         self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt, 'N'] + book + trade_info))
                     elif event['type'] == 'trade':
-                        header = self.Config['TradeInfoHeader']
-                        header.remove('lasttime')
-                        trade_info = [event.get(k) for k in header]
+                        trade_info = [event.get(k) for k in self.Config['TradeInfoHeader']]
                         trade_info.append(ts)
                     else:
                         self.Logger.info('un-processed event %s' % event)
