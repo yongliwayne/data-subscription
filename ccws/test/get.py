@@ -15,14 +15,17 @@ sub = {
 }
 
 def on_message(ws, msg):
-    print (msg)
+    ts = int(time.time() * 1000)
+    print([ts, msg])
 
 def on_open(ws):
-    print('open')
+    pass
+    #print('open')
     #ws.send(json.dumps(sub))
 
 def on_close(ws):
-    print('close')
+    pass
+    #print('close')
 
 app = websocket.WebSocketApp(
     url,
