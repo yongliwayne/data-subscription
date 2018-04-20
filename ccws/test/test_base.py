@@ -35,7 +35,8 @@ class Test(unittest.TestCase, Exchange):
             csvwriter = csv.writer(csvFile)
             csvwriter.writerow(['reporttimestamp', 'timestamp', 'datetime'] + header)
 
-    def write_into_redis(self, rdk, rdcon, fn):
+    @staticmethod
+    def write_into_redis(rdk, rdcon, fn):
         fn = '%s/%s' % (datapath, fn)
         fd = gzip.open(fn, 'rt')
         for msg in fd:

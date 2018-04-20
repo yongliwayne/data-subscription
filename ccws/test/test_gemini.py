@@ -21,9 +21,9 @@ class TestGemini(Test, Gemini):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(15, exception=RuntimeError):
+            with timeout(15, exception=RuntimeWarning):
                 self.process_data()
-        except RuntimeError:
+        except RuntimeWarning:
             pass
 
         try:
