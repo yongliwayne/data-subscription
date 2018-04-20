@@ -4,19 +4,16 @@ import gzip
 import json
 import ccws
 from ccws.configs import HOME_PATH
-#from ccws.test.cons import TestConfigs
 
 
 class Test(unittest.TestCase):
     def __init__(self, ex, currency, mode):
         unittest.TestCase.__init__(self)
-        # self.configs = TestConfigs[ex][currency][mode]
         self.ex = getattr(ccws, ex)()
         self.ex.set_market(currency, mode)
         self.ex.connect_redis()
 
     def write_into_redis(self, fn):
-        # fn = self.configs['OriginFileName']
         rdk = self.ex.Config.get('RedisCollectKey')
         fd = gzip.open(fn, 'rt')
         for msg in fd:
@@ -31,8 +28,6 @@ class Test(unittest.TestCase):
         self.ex.write_data_csv()
 
     def compare_two_csv(self, date, output):
-        # origin_date = self.configs['OriginDate']
-        # origin_file_path = self.configs['OriginFilePath']
         fn = self.ex.Config.get('FileName')
         with open(output, 'rt') as fn1, \
                 open('%s/%s/%s' % (HOME_PATH, date, fn), 'rt') as fn2:
