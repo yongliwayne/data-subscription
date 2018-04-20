@@ -8,9 +8,18 @@ from ccws import Exchange
 
 
 class Test(unittest.TestCase, Exchange):
-    def __init__(self):
-        unittest.TestCase.__init__(self)
+    def __init__(self, *args, **kwargs):
+        unittest.TestCase.__init__(self, *args, **kwargs)
         Exchange.__init__(self)
+
+    @staticmethod
+    def datapath():
+        abspath = os.getcwd()
+        relpath = 'ccws/test/test_data/'
+        if 'ccws' in abspath:
+            return abspath.split('ccws')[0] + relpath
+        else:
+            return relpath
 
     def initialization(self, currency, mode, date):
         self.set_market(currency, mode)
@@ -22,8 +31,8 @@ class Test(unittest.TestCase, Exchange):
         self.RedisConnection.delete(output_key)
 
     @staticmethod
-    def create_test_file(date, filename, header):
-        filefolder = '%s/%s' % (HOME_PATH, date)
+    def create_test_file(path, filename, header):
+        filefolder = '%s/%s' % (HOME_PATH, path)
         if not os.path.exists(filefolder):
             os.makedirs(filefolder)
         file = '%s/%s' % (filefolder, filename)
@@ -33,17 +42,17 @@ class Test(unittest.TestCase, Exchange):
             csvwriter = csv.writer(csvFile)
             csvwriter.writerow(['reporttimestamp', 'timestamp', 'datetime'] + header)
 
-    @staticmethod
-    def write_into_redis(rdk, rdcon, fn):
+    def write_into_redis(self, rdk, rdcon, fn):
+        fn = '%s/%s' % (self.datapath(), fn)
         fd = gzip.open(fn, 'rt')
         for msg in fd:
             msg = json.loads(msg)
             rdcon.lpush(rdk, json.dumps(msg))
         fd.close()
 
-    def compare_two_csv(self, fn1, fn2):
-        with gzip.open(fn1, 'rt') as fn1, \
-                open(fn2, 'rt') as fn2:
+    def compare_two_csv(self, f1, f2):
+        with gzip.open('%s/%s' % (self.datapath(), f1), 'rt') as fn1, \
+                open(f2, 'rt') as fn2:
             reader1 = csv.DictReader(fn1)
             reader2 = csv.DictReader(fn2)
             for row1, row2 in zip(reader1, reader2):

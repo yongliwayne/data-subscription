@@ -89,7 +89,6 @@ class Exchange(object):
             except Exception as e:
                 self.Logger.exception(e)
                 error_count -= 1
-                print(error_count)
                 if error_count < 0:
                     break
 

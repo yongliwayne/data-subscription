@@ -5,15 +5,15 @@ from ccws.configs import HOME_PATH
 
 
 class TestGemini(Test, Gemini):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         Gemini.__init__(self)
-        Test.__init__(self)
+        Test.__init__(self, *args, **kwargs)
 
     def test_BTC_USD_order(self):
         origin = {
-            'FileName': 'ccws/test/test_data/gemini_data.gz',
+            'FileName': 'gemini_data.gz',
             'Date': '2018/04/19',
-            'Output': 'ccws/test/test_data/BTC_USD-gemini.book.csv.gz',
+            'Output': 'BTC_USD-gemini.book.csv.gz',
         }
         self.initialization('BTC/USD', 'order', origin['Date'])
 
@@ -33,5 +33,5 @@ class TestGemini(Test, Gemini):
             pass
 
         fn1 = origin['Output']
-        fn2 = '%s/%s/%s' %(HOME_PATH, origin['Date'], self.Config['FileName'])
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
