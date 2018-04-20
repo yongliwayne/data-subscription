@@ -6,20 +6,13 @@ import os
 from ccws.configs import HOME_PATH
 from ccws import Exchange
 
+datapath = './test_data/' if 'ccws/test' in os.getcwd() else 'ccws/test/test_data/'
+
 
 class Test(unittest.TestCase, Exchange):
     def __init__(self, *args, **kwargs):
         unittest.TestCase.__init__(self, *args, **kwargs)
         Exchange.__init__(self)
-
-    @staticmethod
-    def datapath():
-        abspath = os.getcwd()
-        relpath = 'ccws/test/test_data/'
-        if 'ccws' in abspath:
-            return abspath.split('ccws')[0] + relpath
-        else:
-            return relpath
 
     def initialization(self, currency, mode, date):
         self.set_market(currency, mode)
@@ -43,7 +36,7 @@ class Test(unittest.TestCase, Exchange):
             csvwriter.writerow(['reporttimestamp', 'timestamp', 'datetime'] + header)
 
     def write_into_redis(self, rdk, rdcon, fn):
-        fn = '%s/%s' % (self.datapath(), fn)
+        fn = '%s/%s' % (datapath, fn)
         fd = gzip.open(fn, 'rt')
         for msg in fd:
             msg = json.loads(msg)
@@ -51,7 +44,7 @@ class Test(unittest.TestCase, Exchange):
         fd.close()
 
     def compare_two_csv(self, f1, f2):
-        with gzip.open('%s/%s' % (self.datapath(), f1), 'rt') as fn1, \
+        with gzip.open('%s/%s' % (datapath, f1), 'rt') as fn1, \
                 open(f2, 'rt') as fn2:
             reader1 = csv.DictReader(fn1)
             reader2 = csv.DictReader(fn2)
