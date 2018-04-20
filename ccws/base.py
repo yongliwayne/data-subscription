@@ -84,6 +84,8 @@ class Exchange(object):
                         csvwriter.writerow(data)
                 else:
                     time.sleep(60)
+            except RuntimeWarning:
+                break
             except Exception as e:
                 self.Logger.exception(e)
                 error_count -= 1
