@@ -47,7 +47,7 @@ class Gemini(Exchange):
                 ss_pre = ss
             elif initialized:
                 if ss-ss_pre != 1:
-                    self.Logger.warning('Missing Data in front of %s' % events.get('eventId'))
+                    self.Logger.warning('Missing Data in front of %s' % msg.get('eventId'))
                 ss_pre = ss
                 for event in events:
                     if event['type'] == 'change':
