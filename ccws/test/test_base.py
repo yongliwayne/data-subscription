@@ -6,7 +6,7 @@ import os
 from ccws.configs import HOME_PATH
 from ccws import Exchange
 
-datapath = './test_data/' if 'ccws/test' in os.getcwd() else 'ccws/test/test_data/'
+datapath = './test_data' if 'ccws/test' in os.getcwd() else 'ccws/test/test_data'
 
 
 class Test(unittest.TestCase, Exchange):

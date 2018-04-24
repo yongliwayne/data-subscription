@@ -12,7 +12,7 @@ class TestGemini(Test, Gemini):
     def test_BTC_USD_order(self):
         origin = {
             'FileName': 'gemini_data.gz',
-            'Date': '2018/04/19',
+            'Date': '2018/04/24',
             'Output': 'BTC_USD-gemini.book.csv.gz',
         }
         self.initialization('BTC/USD', 'order', origin['Date'])
@@ -21,13 +21,13 @@ class TestGemini(Test, Gemini):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(15, exception=RuntimeError):
+            with timeout(60, exception=RuntimeWarning):
                 self.process_data()
-        except RuntimeError:
+        except RuntimeWarning:
             pass
 
         try:
-            with timeout(15, exception=RuntimeWarning):
+            with timeout(60, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
