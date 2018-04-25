@@ -106,9 +106,9 @@ class Exchange(object):
     def _binary_search(self, find, list1, low, high):
         while low <= high:
             mid = int((low + high) / 2)
-            if self._check_price_eq(list1[mid], find):
+            if self._check_price_eq(list1[mid][0], find):
                 return [mid, 'True']
-            elif list1[mid] > find:
+            elif list1[mid][0] > find:
                 high = mid - 1
             else:
                 low = mid + 1
