@@ -21,7 +21,7 @@ class TestGdax(Test, Gdax):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(60, exception=RuntimeWarning):
+            with timeout(5, exception=RuntimeWarning):
                 self.process_data()
         except RuntimeWarning:
             pass
@@ -48,7 +48,7 @@ class TestGdax(Test, Gdax):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(10, exception=RuntimeWarning):
+            with timeout(5, exception=RuntimeWarning):
                 self.process_data()
         except RuntimeWarning:
             pass
