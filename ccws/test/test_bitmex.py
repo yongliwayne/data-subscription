@@ -4,7 +4,7 @@ from ccws.test.test_base import Test
 from ccws.configs import HOME_PATH
 
 
-class TestGemini(Test, Bitmex):
+class TestBitmex(Test, Bitmex):
     def __init__(self, *args, **kwargs):
         Bitmex.__init__(self)
         Test.__init__(self, *args, **kwargs)
@@ -38,7 +38,7 @@ class TestGemini(Test, Bitmex):
 
     def test_BTC_USD_orderbook10(self):
         origin = {
-            'FileName': 'bitmex_orderbook10.gz',
+            'FileName': 'bitmex_order.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-bitmex.book.csv.gz',
         }
