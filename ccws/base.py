@@ -117,21 +117,15 @@ class Exchange(object):
     def _update_order_book(self, bids, asks, side, price, remaining):
         if side in ['bid', 'buy']:
             book = bids
-            cut = int(99*len(book)/100)
+            cut = int(99*(len(book)-1)/100)
         else:
             book = asks
-            cut = int(len(book)/100)
+            cut = int((len(book)-1)/100)
 
-        if price < book[0][0]:
-            book.insert(0, [price, remaining])
-            return
-        elif price > book[-1][0]:
-            book.insert(len(book), [price, remaining])
-            return
-        elif price < book[cut][0]:
-            res = self._binary_search(price, book, 0, cut+1)
+        if price < book[cut][0]:
+            res = self._binary_search(price, book, 0, cut-1)
         else:
-            res = self._binary_search(price, book, cut, len(book))
+            res = self._binary_search(price, book, cut, len(book)-1)
 
         if res[1] == 'True':
             if remaining < self.Config['AmountMin']:
