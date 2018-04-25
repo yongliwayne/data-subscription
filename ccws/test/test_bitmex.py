@@ -21,13 +21,13 @@ class TestGemini(Test, Bitmex):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(15, exception=RuntimeWarning):
+            with timeout(10, exception=RuntimeWarning):
                 self.process_data()
         except RuntimeWarning:
             pass
 
         try:
-            with timeout(15, exception=RuntimeWarning):
+            with timeout(5, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
@@ -54,7 +54,7 @@ class TestGemini(Test, Bitmex):
             pass
 
         try:
-            with timeout(15, exception=RuntimeWarning):
+            with timeout(10, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
