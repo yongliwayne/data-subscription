@@ -20,7 +20,7 @@ class Gemini(Exchange):
         initialized = False
         book_pre = []
         asks, bids = [], []
-        trade_info = ['']*len(self.Config['TradeInfoHeader'])
+        trade_info = []
         ss_pre = -1
         while True:
             if self.RedisConnection.llen(input_key) < 1:
@@ -34,6 +34,7 @@ class Gemini(Exchange):
             if ss == 0:
                 asks, bids = [], []
                 book_pre = []
+                trade_info = []
                 for event in events:
                     if event.get('reason') != 'initial' and event.get('type') != 'change':
                         self.Logger.warning("unknown event %s" % event)

@@ -27,7 +27,7 @@ class TestGdax(Test, Gdax):
             pass
 
         try:
-            with timeout(5, exception=RuntimeWarning):
+            with timeout(2, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
@@ -54,7 +54,7 @@ class TestGdax(Test, Gdax):
             pass
 
         try:
-            with timeout(5, exception=RuntimeWarning):
+            with timeout(1, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass

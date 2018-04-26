@@ -27,7 +27,7 @@ class TestGemini(Test, Gemini):
             pass
 
         try:
-            with timeout(3, exception=RuntimeWarning):
+            with timeout(2, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
@@ -54,7 +54,7 @@ class TestGemini(Test, Gemini):
             pass
 
         try:
-            with timeout(4, exception=RuntimeWarning):
+            with timeout(2, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass

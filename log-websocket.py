@@ -14,9 +14,8 @@ class GetData:
         # file name need to be changed
         fn = open('input.txt', 'w')
         input_key = ex.Config['RedisCollectKey']
-        length = ex.RedisConnection.llen(input_key)
-        for i in range(length):
-            fn.writelines(ex.RedisConnection.lrange(input_key, -i-1, -i-1)[0].decode('utf-8'))
+        while ex.RedisConnection.llen(input_key) > 0:
+            fn.writelines(ex.RedisConnection.rpop(input_key).decode('utf-8'))
             fn.write('\n')
 
 
