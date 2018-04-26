@@ -33,6 +33,7 @@ class Gemini(Exchange):
             ts, ss, events = msg.get('timestampms', ct), msg['socket_sequence'], msg['events']
             if ss == 0:
                 asks, bids = [], []
+                book_pre = []
                 for event in events:
                     if event.get('reason') != 'initial' and event.get('type') != 'change':
                         self.Logger.warning("unknown event %s" % event)
