@@ -18,8 +18,8 @@ class Gemini(Exchange):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
         initialized = False
-        asks, bids = [], []
         book_pre = []
+        asks, bids = [], []
         trade_info = ['']*len(self.Config['TradeInfoHeader'])
         ss_pre = -1
         while True:
@@ -31,7 +31,8 @@ class Gemini(Exchange):
             if msg.get('type') != 'update':
                 continue
             ts, ss, events = msg.get('timestampms', ct), msg['socket_sequence'], msg['events']
-            if ss == 0 and not initialized:
+            if ss == 0:
+                asks, bids = [], []
                 for event in events:
                     if event.get('reason') != 'initial' and event.get('type') != 'change':
                         self.Logger.warning("unknown event %s" % event)
