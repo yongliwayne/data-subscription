@@ -103,22 +103,37 @@ class Exchange(object):
         # divide by 2 to avoid precision
         return abs(p1-p2) < self.Config['TickSize']/2
 
+    def _binary_search(self, find, list1, low, high):
+        while low <= high:
+            mid = int((low + high) / 2)
+            if self._check_price_eq(list1[mid][0], find):
+                return [mid, 'True']
+            elif list1[mid][0] > find:
+                high = mid - 1
+            else:
+                low = mid + 1
+        return [low, 'False']
+
     def _update_order_book(self, bids, asks, side, price, remaining):
         if side in ['bid', 'buy']:
             book = bids
+            cut = int(99*(len(book)-1)/100)
         else:
             book = asks
-        for i in range(len(book)):
-            if self._check_price_eq(price, book[i][0]):
-                if remaining < self.Config['AmountMin']:
-                    del book[i]
-                else:
-                    book[i][1] = remaining
-                return
-            elif price < book[i][0]:
-                book.insert(i, [price, remaining])
-                return
-        book.insert(len(book), [price, remaining])
+            cut = int((len(book)-1)/100)
+
+        if price < book[cut][0]:
+            res = self._binary_search(price, book, 0, cut-1)
+        else:
+            res = self._binary_search(price, book, cut, len(book)-1)
+
+        if res[1] == 'True':
+            if remaining < self.Config['AmountMin']:
+                del book[res[0]]
+            else:
+                book[res[0]][1] = remaining
+        else:
+            book.insert(res[0], [price, remaining])
 
     @staticmethod
     def _cut_order_book(bids, asks, depth):
