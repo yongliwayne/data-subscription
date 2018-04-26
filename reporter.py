@@ -29,7 +29,7 @@ def SendReport(mail_body):
 if __name__ == '__main__':
     test_dir = '%s/testcase/data-subscription/' % os.path.expanduser('~')
 
-    discover = unittest.defaultTestLoader.discover(test_dir, pattern='test_gemini.py')
+    discover = unittest.defaultTestLoader.discover(test_dir, pattern='test_*.py')
 
     runner = unittest.TextTestRunner()
     res = runner.run(discover)
