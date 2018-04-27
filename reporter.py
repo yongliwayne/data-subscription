@@ -5,6 +5,8 @@ import datetime
 import os
 import smtplib
 from email.mime.text import MIMEText
+from ccws.configs import HOME_PATH
+import logging
 
 
 my_sender = 'report_ccws_2018@163.com'
@@ -62,6 +64,15 @@ if __name__ == '__main__':
         %s
         """ % str(i)
         message += message_add
+    logger = logging.getLogger('testcase-1')
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler("%s/log/testcase-1.log" % HOME_PATH)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
     if fail_num != 0 or error_num != 0:
         send_report(message)
+    else:
+        logger.info('success')
 
