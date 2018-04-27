@@ -112,9 +112,9 @@ def main():
 
     mode, path, time_gap = args.mode, args.path, float(args.timegap)
 
-    if mode == 'rt':
+    if mode == 'run_time':
         run_test()
-    elif mode == 'cp':
+    elif mode == 'check_process':
         check_process(path, time_gap)
 
 
