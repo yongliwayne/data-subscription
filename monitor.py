@@ -80,8 +80,8 @@ def run_test():
 
 
 def check_process(path, time_gap):
-    tmr = datetime.datetime.fromtimestamp(time.time())
-    base_dir = '%s/%4d/%02d/%02d/' % (path, tmr.year, tmr.month, tmr.day)
+    today = datetime.datetime.fromtimestamp(time.time())
+    base_dir = '%s/%4d/%02d/%02d/' % (path, today.year, today.month, today.day)
     file_list = os.listdir(base_dir)
     wrong_info = ''
 
@@ -109,7 +109,7 @@ def main():
     parser.add_argument('-t', '--timegap', metavar='timegap', required=False, default=0, help='timegap.')
     args = parser.parse_args()
 
-    mode, path, time_gap = args.mode, args.path, args.timegap
+    mode, path, time_gap = args.mode, args.path, float(args.timegap)
 
     if mode == 'rt':
         run_test()
