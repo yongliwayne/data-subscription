@@ -13,6 +13,18 @@ import argparse
 my_sender = 'report_ccws_2018@163.com'
 my_pass = 'report123'
 my_user = ['yongliwang2014@gmail.com', '1400012716@pku.edu.cn']
+logger = logging.getLogger('testcase')
+
+
+def set_logger(logger):
+    logger.setLevel(logging.INFO)
+    if not os.path.exists("%s/log/" % HOME_PATH):
+        os.mkdir("%s/log/" % HOME_PATH)
+    handler = logging.FileHandler("%s/log/testcase.log" % HOME_PATH)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 def send_report(mail_body):
@@ -63,20 +75,9 @@ def run_test():
         %s
         """ % str(i)
         message += message_add
-    logger = logging.getLogger('testcase')
-    logger.setLevel(logging.INFO)
-    if not os.path.exists("%s/log/" % HOME_PATH):
-        os.mkdir("%s/log/" % HOME_PATH)
-    handler = logging.FileHandler("%s/log/testcase.log" % HOME_PATH)
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
     logger.info(message)
     if fail_num != 0 or error_num != 0:
         send_report(message)
-    else:
-        logger.info('success')
 
 
 def check_process(path, time_gap):
@@ -118,4 +119,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    set_logger(logger)
+    try:
+        main()
+    except Exception as e:
+        logger.info(e)
