@@ -35,7 +35,9 @@ if __name__ == '__main__':
     res = runner.run(discover)
     all_num = res.testsRun
     fail_num = len(res.failures)
-    reason = res.failures
+    error_num = len(res.errors)
+    failure = res.failures
+    error = res.errors
     message = """
     All case number
     ...................
@@ -45,12 +47,22 @@ if __name__ == '__main__':
     %d
     Failed case and reason
     """ % (all_num, fail_num)
-    for i in reason:
+    for i in failure:
         message_add = """
         .......................
         %s
         """ % str(i)
         message += message_add
-    if len(res.failures) != 0:
+    message += """
+    Error case and reason
+    ........................
+    """
+    for i in error:
+        message_add = """
+        .......................
+        %s
+        """ % str(i)
+        message += message_add
+    if fail_num != 0 and error_num != 0:
         SendReport(message)
 
