@@ -66,6 +66,8 @@ if __name__ == '__main__':
         message += message_add
     logger = logging.getLogger('testcase-1')
     logger.setLevel(logging.INFO)
+    if not os.path.exists("%s/log/" % HOME_PATH):
+        os.mkdir("%s/log/" % HOME_PATH)
     handler = logging.FileHandler("%s/log/testcase-1.log" % HOME_PATH)
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
