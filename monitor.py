@@ -7,6 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from ccws.configs import HOME_PATH
 import logging
+import argparse
 
 
 my_sender = 'report_ccws_2018@163.com'
@@ -27,11 +28,9 @@ def send_report(mail_body):
     server.quit()
 
 
-if __name__ == '__main__':
+def run_test():
     test_dir = '%s/testcase/data-subscription/' % os.path.expanduser('~')
-
     discover = unittest.defaultTestLoader.discover(test_dir, pattern='test_*.py')
-
     runner = unittest.TextTestRunner()
     res = runner.run(discover)
     all_num = res.testsRun
@@ -76,4 +75,47 @@ if __name__ == '__main__':
     logger.info(message)
     if fail_num != 0 or error_num != 0:
         send_report(message)
+    else:
+        logger.info('success')
 
+
+def check_process(path, time_gap):
+    tmr = datetime.datetime.fromtimestamp(time.time())
+    base_dir = '%s/%4d/%02d/%02d/' % (path, tmr.year, tmr.month, tmr.day)
+    file_list = os.listdir(base_dir)
+    wrong_info = ''
+
+    for i in range(len(file_list)):
+        path = os.path.join(base_dir, file_list[i])
+        modify_time = os.path.getmtime(path)
+        now = time.time()
+        if abs(now - modify_time) > time_gap:
+            modify_date = datetime.datetime.fromtimestamp(modify_time).strftime('%Y-%m-%d %H:%M:%S')
+            now_date = datetime.datetime.fromtimestamp(now).strftime('%Y-%m-%d %H:%M:%S')
+            wrong_info += """
+            the csv file:%s
+            last modified time:%s
+            check time:%s
+            -------------------------------------------
+            """ % (file_list[i], modify_date, now_date)
+    if wrong_info != '':
+        send_report(wrong_info)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Monitor.")
+    parser.add_argument('-m', '--mode', metavar='mode', required=True, help='function mode.')
+    parser.add_argument('-p', '--path', metavar='path', required=False, default='', help='path.')
+    parser.add_argument('-t', '--timegap', metavar='timegap', required=False, default=0, help='timegap.')
+    args = parser.parse_args()
+
+    mode, path, time_gap = args.mode, args.path, args.timegap
+
+    if mode == 'rt':
+        run_test()
+    elif mode == 'cp':
+        check_process(path, time_gap)
+
+
+if __name__ == '__main__':
+    main()
