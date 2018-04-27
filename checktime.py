@@ -25,4 +25,4 @@ for i in range(len(file_list)):
         -------------------------------------------
         """ % (file_list[i], modify_date, now_date)
 if wrong_info != '':
-    print(wrong_info)
+    send_report(wrong_info)
