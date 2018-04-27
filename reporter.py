@@ -63,6 +63,6 @@ if __name__ == '__main__':
         %s
         """ % str(i)
         message += message_add
-    if fail_num != 0 and error_num != 0:
+    if fail_num != 0 or error_num != 0:
         SendReport(message)
 
