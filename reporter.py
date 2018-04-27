@@ -7,8 +7,8 @@ import smtplib
 from email.mime.text import MIMEText
 
 
-my_sender = 'applezjm123456@126.com'
-my_pass = 'applezjm123'
+my_sender = 'report_ccws_2018@163.com'
+my_pass = 'report123'
 my_user = ['yongliwang2014@gmail.com', '1400012716@pku.edu.cn']
 
 
@@ -19,7 +19,7 @@ def send_report(mail_body):
     tmr = datetime.datetime.fromtimestamp(time.time())
     msg['Subject'] = 'CCWS Test Report %4d/%02d/%02d' % (tmr.year, tmr.month, tmr.day)
 
-    server = smtplib.SMTP_SSL("smtp.126.com", 465)
+    server = smtplib.SMTP_SSL("smtp.163.com", 465)
     server.login(my_sender, my_pass)
     server.sendmail(my_sender, my_user, msg.as_string())
     server.quit()
