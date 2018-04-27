@@ -5,7 +5,6 @@ import datetime
 import os
 import smtplib
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE
 
 
 my_sender = 'applezjm123456@126.com'
@@ -13,12 +12,12 @@ my_pass = 'applezjm123'
 my_user = ['yongliwang2014@gmail.com', '1400012716@pku.edu.cn']
 
 
-def SendReport(mail_body):
+def send_report(mail_body):
     msg = MIMEText(mail_body, 'plain', 'utf-8')
     msg['From'] = my_sender
-    msg['To'] = COMMASPACE.join(my_user)
+    msg['To'] = ', '.join(my_user)
     tmr = datetime.datetime.fromtimestamp(time.time())
-    msg['Subject'] = 'report in testcase-1 %4d/%02d/%02d' % (tmr.year, tmr.month, tmr.day)
+    msg['Subject'] = 'CCWS Test Report %4d/%02d/%02d' % (tmr.year, tmr.month, tmr.day)
 
     server = smtplib.SMTP_SSL("smtp.126.com", 465)
     server.login(my_sender, my_pass)
@@ -64,5 +63,5 @@ if __name__ == '__main__':
         """ % str(i)
         message += message_add
     if fail_num != 0 or error_num != 0:
-        SendReport(message)
+        send_report(message)
 
