@@ -7,6 +7,7 @@ import smtplib
 from email.mime.text import MIMEText
 from ccws.configs import HOME_PATH
 import logging
+from logging.handlers import RotatingFileHandler
 import argparse
 
 
@@ -16,11 +17,11 @@ my_user = ['yongliwang2014@gmail.com', '1400012716@pku.edu.cn']
 logger = logging.getLogger('testcase')
 
 
-def set_logger(logger):
+def set_logger(path):
     logger.setLevel(logging.INFO)
-    if not os.path.exists("%s/log/" % HOME_PATH):
-        os.mkdir("%s/log/" % HOME_PATH)
-    handler = logging.FileHandler("%s/log/testcase.log" % HOME_PATH)
+    if not os.path.exists("%s/log/" % path):
+        os.mkdir("%s/log/" % path)
+    handler = RotatingFileHandler("%s/log/testcase.log" % path)
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -106,20 +107,21 @@ def check_process(path, time_gap):
 def main():
     parser = argparse.ArgumentParser(description="Monitor.")
     parser.add_argument('-m', '--mode', metavar='mode', required=True, help='function mode.')
-    parser.add_argument('-p', '--path', metavar='path', required=False, default='', help='path.')
+    parser.add_argument('-p', '--path', metavar='path', required=True, default='', help='path.')
     parser.add_argument('-t', '--timegap', metavar='timegap', required=False, default=0, help='timegap.')
     args = parser.parse_args()
 
     mode, path, time_gap = args.mode, args.path, float(args.timegap)
 
     if mode == 'run_time':
+        set_logger(path)
         run_test()
     elif mode == 'check_process':
+        set_logger(path)
         check_process(path, time_gap)
 
 
 if __name__ == '__main__':
-    set_logger(logger)
     try:
         main()
     except Exception as e:
