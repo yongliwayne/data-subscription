@@ -5,7 +5,6 @@ import datetime
 import os
 import smtplib
 from email.mime.text import MIMEText
-from ccws.configs import HOME_PATH
 import logging
 from logging.handlers import RotatingFileHandler
 import argparse
