@@ -2,6 +2,8 @@ from interruptingcow import timeout
 from ccws.gdax import Gdax
 from ccws.test.test_base import Test
 from ccws.configs import HOME_PATH
+from ccws.configs import load_logger_config
+import logging
 import gzip
 import csv
 
@@ -10,6 +12,8 @@ class TestGdax(Test, Gdax):
     def __init__(self, *args, **kwargs):
         Gdax.__init__(self)
         Test.__init__(self, *args, **kwargs)
+        load_logger_config('gdax_test')
+        self.Logger = logging.getLogger('gdax_test')
 
     def test_BTC_USD_order(self):
         origin = {
@@ -86,6 +90,7 @@ class TestGdax(Test, Gdax):
             pointer_book = 0
             pointer_trade = 0
             end_point = 0
+            missing_time = 0
             for row2 in reader2:
                 pointer_trade += 1
                 timestamp = int(row2['timestamp'])
@@ -97,7 +102,8 @@ class TestGdax(Test, Gdax):
                 for row1 in reader1:
                     pointer_book += 1
                     if int(row1['timestamp']) - timestamp > 2000:
-                        print(pointer_trade)
+                        missing_time += 1
+                        self.Logger.info("missing match for trade %d" % pointer_trade)
                         f1.seek(0)
                         tmp = end_point - 1
                         while tmp:
@@ -120,3 +126,4 @@ class TestGdax(Test, Gdax):
                             csvwriter.writerow(self.transf(present_book) + [side, price, amount, timestamp])
                             break
                     last_book = present_book
+        self.assertEqual(missing_time, 0)
