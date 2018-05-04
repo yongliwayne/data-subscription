@@ -69,13 +69,6 @@ class TestGdax(Test, Gdax):
         fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
 
-    @staticmethod
-    def transf(dic):
-        tmp = []
-        for k in dic.keys():
-            tmp.append(dic[k])
-        return tmp
-
     def test_gdax_trade(self):
         self.set_market('BTC/USD', 'order')
         fn1 = '/home/applezjm/trade_test/BTC_USD-gdax.book.csv.gz'
@@ -105,25 +98,22 @@ class TestGdax(Test, Gdax):
                         missing_time += 1
                         self.Logger.info("missing match for trade %d" % pointer_trade)
                         f1.seek(0)
-                        tmp = end_point - 1
+                        tmp = end_point
                         while tmp:
                             tmp -= 1
                             last_book = reader1.__next__()
+                        pointer_book = end_point
                         break
                     present_book = row1
-                    if present_book[price_tag] == last_book[price_tag]:
-                        if self.compare_value(float(present_book[price_tag]), price, self.Config['TickSize']) \
-                                and self.compare_value(float(last_book[value_tag]) - float(present_book[value_tag]),
-                                amount, self.Config['AmountMin']):
-                            last_book = present_book
-                            end_point = pointer_book
-                            csvwriter.writerow(self.transf(present_book) + [side, price, amount, timestamp])
-                            break
-                    elif self.compare_value(float(last_book[price_tag]), price, self.Config['TickSize']) \
-                                and self.compare_value(float(last_book[value_tag]), amount, self.Config['AmountMin']):
-                            last_book = present_book
-                            end_point = pointer_book
-                            csvwriter.writerow(self.transf(present_book) + [side, price, amount, timestamp])
-                            break
+                    if present_book[price_tag] == last_book[price_tag] and \
+                            self.compare_value(float(present_book[price_tag]), price, self.Config['TickSize']) \
+                            and self.compare_value(float(last_book[value_tag]) - float(present_book[value_tag]),
+                            amount, self.Config['AmountMin']) \
+                            or self.compare_value(float(last_book[price_tag]), price, self.Config['TickSize']) \
+                            and self.compare_value(float(last_book[value_tag]), amount, self.Config['AmountMin']):
+                        last_book = present_book
+                        end_point = pointer_book
+                        csvwriter.writerow(present_book.values() + [side, price, amount, timestamp])
+                        break
                     last_book = present_book
         self.assertEqual(missing_time, 0)
