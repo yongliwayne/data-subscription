@@ -65,7 +65,7 @@ class TestGemini(Test, Gemini):
         fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
 
-    def test_gemini_trade(self):
+    def test_BTC_USD_check_trade(self):
         self.set_market('BTC/USD', 'order')
         fn1 = '/home/applezjm/trade_test/BTC_USD-gemini.book.csv.gz'
         with gzip.open(fn1, 'rt') as f:
