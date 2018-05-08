@@ -6,6 +6,10 @@ from ccws.configs import load_logger_config
 import logging
 import gzip
 import csv
+import datetime
+import time
+from ccws.configs import TIMEZONE
+import subprocess
 
 
 class TestGdax(Test, Gdax):
@@ -71,9 +75,14 @@ class TestGdax(Test, Gdax):
         self.set_market('BTC/USD', 'order')
         load_logger_config('gdax_BTC_USD_check_trade_test')
         logger = logging.getLogger('gdax_BTC_USD_check_trade_test')
-        fn1 = '/home/applezjm/trade_test/BTC_USD-gdax.book.csv.gz'
-        fn2 = '/home/applezjm/trade_test/BTC_USD-gdax.ticker.csv.gz'
-        with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2, open('tmp.csv', 'a+') as csvFile:
+        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-gdax.book.csv.gz')
+        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-gdax.ticker.csv.gz')
+        output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                          'BTC_USD-gdax.consolidate.book.csv')
+        with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2, open(output, 'a+') as csvFile:
             reader1 = csv.DictReader(f1)
             reader2 = csv.DictReader(f2)
             csvwriter = csv.writer(csvFile)
@@ -104,14 +113,15 @@ class TestGdax(Test, Gdax):
                         break
                     present_book = row1
                     if (present_book[price_tag] == last_book[price_tag] and
-                            self.check_equal(float(present_book[price_tag]), price, self.Config['TickSize'])
+                            self.check_equal(float(present_book[price_tag]), price, self.Config['TickSize']/2)
                             and self.check_equal(float(last_book[value_tag]) - float(present_book[value_tag]),
                                                  amount, self.Config['AmountMin']/2)) \
-                            or (self.check_equal(float(last_book[price_tag]), price, self.Config['TickSize'])
+                            or (self.check_equal(float(last_book[price_tag]), price, self.Config['TickSize']/2)
                                 and self.check_equal(float(last_book[value_tag]), amount, self.Config['AmountMin']/2)):
                         last_book = present_book
                         end_point = pointer_book
                         csvwriter.writerow(list(present_book.values()) + [side, price, amount, timestamp])
                         break
                     last_book = present_book
+        subprocess.call('gzip %s' % output, shell=True)
         self.assertEqual(missing_time, 0)

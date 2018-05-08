@@ -7,6 +7,9 @@ import collections
 import logging
 import gzip
 import csv
+import datetime
+import time
+from ccws.configs import TIMEZONE
 
 
 class TestBitmex(Test, Bitmex):
@@ -74,8 +77,11 @@ class TestBitmex(Test, Bitmex):
         self.set_market('BTC/USD', 'orderbook10')
         load_logger_config('bitmex_BTC_USD_check_trade_test')
         logger = logging.getLogger('bitmex_BTC_USD_check_trade_test')
-        fn1 = '/home/applezjm/trade_test/BTC_USD-bitmex.book.csv.gz'
-        fn2 = '/home/applezjm/trade_test/BTC_USD-bitmex.trade.csv.gz'
+        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-bitmex.book.csv.gz')
+        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-bitmex.trade.csv.gz')
         with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2:
             reader1 = csv.DictReader(f1)
             reader2 = csv.DictReader(f2)
@@ -128,7 +134,7 @@ class TestBitmex(Test, Bitmex):
                                 price_tag = '%sp%d' % (s, num)
                                 value_tag = '%sv%d' % (s, num)
                                 if num < key_num and not (self.check_equal(float(last_book[price_tag]), prices,
-                                                                           self.Config['TickSize']) and
+                                                                           self.Config['TickSize']/2) and
                                                           self.check_equal(float(last_book[value_tag]),
                                                                            trade_tmp[s][prices],
                                                                            self.Config['AmountMin']/2)):
@@ -136,13 +142,13 @@ class TestBitmex(Test, Bitmex):
                                     break
                                 elif num == key_num and not ((present_book[price_tag_0] == last_book[price_tag]
                                                               and self.check_equal(float(present_book[price_tag]),
-                                                                                   prices, self.Config['TickSize'])
+                                                                                   prices, self.Config['TickSize']/2)
                                                               and self.check_equal(float(last_book[value_tag]) -
                                                                                    float(present_book[value_tag_0]),
                                                                                    trade_tmp[s][prices],
                                                                                    self.Config['AmountMin']/2))
                                                              or (self.check_equal(float(last_book[price_tag]), prices,
-                                                                                  self.Config['TickSize'])
+                                                                                  self.Config['TickSize']/2)
                                                                  and self.check_equal(float(last_book[value_tag]),
                                                                                       trade_tmp[s][prices],
                                                                                       self.Config['AmountMin']/2))):
@@ -180,19 +186,19 @@ class TestBitmex(Test, Bitmex):
                         price_tag = '%sp%d' % (s, num)
                         value_tag = '%sv%d' % (s, num)
                         if num < key_num and not (
-                                self.check_equal(float(last_book[price_tag]), prices, self.Config['TickSize'])
+                                self.check_equal(float(last_book[price_tag]), prices, self.Config['TickSize']/2)
                                 and self.check_equal(float(last_book[value_tag]), trade_tmp[s][prices],
                                                      self.Config['AmountMin']/2)):
                             flag = False
                             break
                         elif num == key_num and not ((present_book[price_tag_0] == last_book[price_tag]
                                                       and self.check_equal(float(present_book[price_tag]), prices,
-                                                                           self.Config['TickSize'])
+                                                                           self.Config['TickSize']/2)
                                                       and self.check_equal(
                                     float(last_book[value_tag]) - float(present_book[value_tag_0]),
                                     trade_tmp[s][prices], self.Config['AmountMin']/2))
                                                      or (self.check_equal(float(last_book[price_tag]), prices,
-                                                                          self.Config['TickSize'])
+                                                                          self.Config['TickSize']/2)
                                                          and self.check_equal(float(last_book[value_tag]),
                                                                               trade_tmp[s][prices],
                                                                               self.Config['AmountMin']/2))):
