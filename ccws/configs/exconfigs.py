@@ -222,6 +222,8 @@ BitmexConfigs = {
             'RedisCollectKey': 'bitmex-BTC_USD-orderBook10_raw',
             'RedisOutputKey': 'bitmex-BTC_USD-orderBook10_processed',
             'DataHandler': 'process_order_book_10_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
         },
     },
 }

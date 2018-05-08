@@ -15,7 +15,7 @@ class Test(unittest.TestCase, Exchange):
         Exchange.__init__(self)
 
     @staticmethod
-    def compare_value(v1, v2, min_size):
+    def check_equal(v1, v2, min_size):
         return abs(v1 - v2) < min_size
 
     def initialization(self, currency, mode, date):
