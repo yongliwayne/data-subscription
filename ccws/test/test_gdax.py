@@ -111,7 +111,7 @@ class TestGdax(Test, Gdax):
                             and self.check_equal(float(last_book[value_tag]), amount, self.Config['AmountMin'])):
                         last_book = present_book
                         end_point = pointer_book
-                        csvwriter.writerow(present_book.values() + [side, price, amount, timestamp])
+                        csvwriter.writerow(list(present_book.values()) + [side, price, amount, timestamp])
                         break
                     last_book = present_book
         self.assertEqual(missing_time, 0)
