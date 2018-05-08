@@ -14,6 +14,10 @@ class Test(unittest.TestCase, Exchange):
         unittest.TestCase.__init__(self, *args, **kwargs)
         Exchange.__init__(self)
 
+    @staticmethod
+    def check_equal(v1, v2, min_size):
+        return abs(v1 - v2) < min_size
+
     def initialization(self, currency, mode, date):
         self.set_market(currency, mode)
         self.create_test_file(date, self.Config['FileName'], self.Config['Header'])
