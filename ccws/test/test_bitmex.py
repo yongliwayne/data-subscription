@@ -73,7 +73,7 @@ class TestBitmex(Test, Bitmex):
         fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
 
-    def test_BTC_USD_check_trade(self):
+    def disable_test_BTC_USD_check_trade(self):
         self.set_market('BTC/USD', 'orderbook10')
         load_logger_config('bitmex_BTC_USD_check_trade_test')
         logger = logging.getLogger('bitmex_BTC_USD_check_trade_test')

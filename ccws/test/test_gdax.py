@@ -120,7 +120,8 @@ class TestGdax(Test, Gdax):
                                 and self.check_equal(float(last_book[value_tag]), amount, self.Config['AmountMin']/2)):
                         last_book = present_book
                         end_point = pointer_book
-                        csvwriter.writerow(list(present_book.values()) + [side, price, amount, timestamp])
+                        csvwriter.writerow(
+                            [present_book.get(i) for i in reader1.fieldnames] + [side, price, amount, timestamp])
                         break
                     last_book = present_book
         subprocess.call('gzip %s' % output, shell=True)
