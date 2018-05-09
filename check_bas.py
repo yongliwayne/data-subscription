@@ -3,10 +3,8 @@ import csv
 import collections
 import datetime
 import time
-import logging
 from ccws.configs import TIMEZONE
 from ccws.configs import HOME_PATH
-from ccws.configs import load_logger_config
 
 
 def price_cmp(p1, p2, precision):
@@ -14,15 +12,17 @@ def price_cmp(p1, p2, precision):
 
 
 def main(precision, timestamp):
-    load_logger_config('BTC_USD_check_bas_test')
-    logger = logging.getLogger('BTC_USD_check_bas_test')
     yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
     fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
                                    'BTC_USD-gdax.book.csv.gz')
     fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
                                    'BTC_USD-gemini.book.csv.gz')
+    output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                      'BTC_USD.check_bas.book.csv')
     inf = ['reporttimestamp', 'timestamp', 'bidp0', 'bidv0', 'askp0', 'askv0']
-    with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2:
+    with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2, open(output, 'a+') as csvFile:
+        csvwriter = csv.writer(csvFile)
+        csvwriter.writerow(inf * 2)
         reader1 = csv.DictReader(f1)
         reader2 = csv.DictReader(f2)
         p_row1 = collections.OrderedDict()
@@ -39,8 +39,7 @@ def main(precision, timestamp):
                 ask2 = row2['askp0']
                 if ts1 == ts2:
                     if price_cmp(bid1, bid2, precision) or price_cmp(ask1, ask2, precision):
-                        logger.info('%s %s' % (str(row1[i] for i in inf),
-                                               str(row2[i] for i in inf)))
+                        csvwriter.writerow([row1[i] for i in inf] + [row2[i] for i in inf])
                     p_row1 = row1
                     row1 = reader1.__next__()
                     p_row2 = row2
@@ -54,15 +53,13 @@ def main(precision, timestamp):
                 elif p_ts2 < ts1 < ts2:
                     if price_cmp(bid1, p_row2.get('bidp0', 0), precision)\
                             or price_cmp(ask1, p_row2.get('askp0', 0), precision):
-                        logger.info('%s %s' % (str(row1[i] for i in inf),
-                                               str(p_row2[i] for i in inf)))
+                        csvwriter.writerow([row1[i] for i in inf] + [p_row2[i] for i in inf])
                     p_row1 = row1
                     row1 = reader1.__next__()
                 elif p_ts1 < ts2 < ts1:
                     if price_cmp(bid2, p_row1.get('bidp0', 0), precision)\
                             or price_cmp(ask2, p_row1.get('askp0', 0), precision):
-                        logger.info('%s %s' % (str(p_row1[i] for i in inf),
-                                               str(row2[i] for i in inf)))
+                        csvwriter.writerow([p_row1[i] for i in inf] + [row2[i] for i in inf])
                     p_row2 = row2
                     row2 = reader2.__next__()
         except StopIteration:
