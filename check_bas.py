@@ -1,49 +1,72 @@
 import gzip
 import csv
+import collections
+import datetime
+import time
+import logging
+from ccws.configs import TIMEZONE
+from ccws.configs import HOME_PATH
+from ccws.configs import load_logger_config
 
 
-def price_cmp(p1, p2):
-    return abs(float(p1) - float(p2)) < 0.01/2
+def price_cmp(p1, p2, precision):
+    return abs(float(p1) - float(p2)) > precision
 
 
 def main():
-    fn1 = '/home/applezjm/trade_test/BTC_USD-gdax.book.csv.gz'
-    fn2 = '/home/applezjm/trade_test/BTC_USD-gemini.book.csv.gz'
+    load_logger_config('BTC_USD_check_bas_test')
+    logger = logging.getLogger('BTC_USD_check_bas_test')
+    yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+    fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                   'BTC_USD-gdax.book.csv.gz')
+    fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                   'BTC_USD-gemini.book.csv.gz')
+    inf = ['reporttimestamp', 'timestamp', 'bidp0', 'bidv0', 'askp0', 'askv0']
     with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2:
         reader1 = csv.DictReader(f1)
         reader2 = csv.DictReader(f2)
-        p_row1 = reader1.__next__()
-        p_row2 = reader2.__next__()
+        p_row1 = collections.OrderedDict()
+        p_row2 = collections.OrderedDict()
         row1 = reader1.__next__()
         row2 = reader2.__next__()
         try:
             while True:
-                p_ts1, ts1 = int(p_row1['timestamp']), int(row1['timestamp'])
-                p_ts2, ts2 = int(p_row2['timestamp']), int(row2['timestamp'])
+                p_ts1, ts1 = int(p_row1.get('timestamp', 0)), int(row1['timestamp'])
+                p_ts2, ts2 = int(p_row2.get('timestamp', 0)), int(row2['timestamp'])
                 bid1 = row1['bidp0']
                 bid2 = row2['bidp0']
                 ask1 = row1['askp0']
                 ask2 = row2['askp0']
+                if ts1 == ts2:
+                    if price_cmp(bid1, bid2) or price_cmp(ask1, ask2):
+                        logger.info('%s %s' % (str(row1[i] for i in inf),
+                                               str(row2[i] for i in inf)))
+                    p_row1 = row1
+                    row1 = reader1.__next__()
+                    p_row2 = row2
+                    row2 = reader2.__next__()
+                    continue
                 if ts1 < p_ts2:
                     p_row1 = row1
                     row1 = reader1.__next__()
+                    continue
                 elif ts2 < p_ts1:
                     p_row2 = row2
                     row2 = reader2.__next__()
-                elif p_ts2 <= ts1 <= ts2:
+                    continue
+                elif p_ts2 < ts1 < ts2:
                     closer = p_row2 if 2 * ts1 < (p_ts2 + ts2) else row2
-                    if not price_cmp(bid1, closer['bidp0']):
-                        print('bid difference', row1, closer)
-                    if not price_cmp(ask1, closer['askp0']):
-                        print('ask difference', row1, closer)
+                    if price_cmp(bid1, closer.get('bidp0', 0)) or price_cmp(ask1, closer.get('askp0', 0)):
+                        logger.info('%s %s' % (str(row1[i] for i in inf),
+                                               str(closer[i] for i in inf)))
                     p_row1 = row1
                     row1 = reader1.__next__()
-                elif p_ts1 <= ts2 <= ts1:
+                    continue
+                elif p_ts1 < ts2 < ts1:
                     closer = p_row1 if 2 * ts2 < (p_ts1 + ts1) else row1
-                    if not price_cmp(bid2, closer['bidp0']):
-                        print('bid difference', row2, closer)
-                    if not price_cmp(ask2, closer['askp0']):
-                        print('ask difference', row2, closer)
+                    if price_cmp(bid2, closer.get('bidp0', 0)) or price_cmp(ask2, closer.get('askp0', 0)):
+                        logger.info('%s %s' % (str(closer[i] for i in inf),
+                                               str(row2[i] for i in inf)))
                     p_row2 = row2
                     row2 = reader2.__next__()
         except StopIteration:
