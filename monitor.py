@@ -41,7 +41,7 @@ def send_report(mail_body):
 
 
 def run_test():
-    test_dir = '%s/testcase/data-subscription/' % os.path.expanduser('~')
+    test_dir = '/data/data/script/data-subscription/'
     discover = unittest.defaultTestLoader.discover(test_dir, pattern='test_*.py')
     runner = unittest.TextTestRunner()
     res = runner.run(discover)
@@ -112,7 +112,7 @@ def main():
 
     mode, path, time_gap = args.mode, args.path, float(args.timegap)
 
-    if mode == 'run_time':
+    if mode == 'run_test':
         set_logger(path)
         run_test()
     elif mode == 'check_process':

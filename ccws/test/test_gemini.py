@@ -91,5 +91,6 @@ class TestGemini(Test, Gemini):
                     else:
                         self.assertTrue(abs(float(last_row[value_tag]) - float(row['amount']))
                                         < self.Config['AmountMin']/2)
-                        self.assertTrue(abs(float(last_row[price_tag]) - float(row['price'])) < self.Config['TickSize']/2)
+                        self.assertTrue(abs(float(last_row[price_tag]) - float(row['price']))
+                                        < self.Config['TickSize']/2)
                 last_row = row
