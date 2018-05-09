@@ -10,7 +10,7 @@ from ccws.configs import load_logger_config
 
 
 def price_cmp(p1, p2, precision):
-    return abs(float(p1) - float(p2)) > precision
+    return abs(float(p1) - float(p2)) / abs(float(p1) + float(p2)) > precision
 
 
 def main(precision, timestamp):
@@ -45,29 +45,23 @@ def main(precision, timestamp):
                     row1 = reader1.__next__()
                     p_row2 = row2
                     row2 = reader2.__next__()
-                    continue
-                if ts1 < p_ts2:
+                elif ts1 < p_ts2:
                     p_row1 = row1
                     row1 = reader1.__next__()
-                    continue
                 elif ts2 < p_ts1:
                     p_row2 = row2
                     row2 = reader2.__next__()
-                    continue
                 elif p_ts2 < ts1 < ts2:
-                    closer = p_row2 if 2 * ts1 < (p_ts2 + ts2) else row2
-                    if price_cmp(bid1, closer.get('bidp0', 0, precision))\
-                            or price_cmp(ask1, closer.get('askp0', 0, precision)):
+                    if price_cmp(bid1, p_row2.get('bidp0', 0), precision)\
+                            or price_cmp(ask1, p_row2.get('askp0', 0), precision):
                         logger.info('%s %s' % (str(row1[i] for i in inf),
-                                               str(closer[i] for i in inf)))
+                                               str(p_row2[i] for i in inf)))
                     p_row1 = row1
                     row1 = reader1.__next__()
-                    continue
                 elif p_ts1 < ts2 < ts1:
-                    closer = p_row1 if 2 * ts2 < (p_ts1 + ts1) else row1
-                    if price_cmp(bid2, closer.get('bidp0', 0, precision))\
-                            or price_cmp(ask2, closer.get('askp0', 0, precision)):
-                        logger.info('%s %s' % (str(closer[i] for i in inf),
+                    if price_cmp(bid2, p_row1.get('bidp0', 0), precision)\
+                            or price_cmp(ask2, p_row1.get('askp0', 0), precision):
+                        logger.info('%s %s' % (str(p_row1[i] for i in inf),
                                                str(row2[i] for i in inf)))
                     p_row2 = row2
                     row2 = reader2.__next__()
@@ -76,4 +70,4 @@ def main(precision, timestamp):
 
 
 if __name__ == '__main__':
-    main(precision = 0.01, timestamp = 'timestamp')
+    main(precision=0.01, timestamp='timestamp')
