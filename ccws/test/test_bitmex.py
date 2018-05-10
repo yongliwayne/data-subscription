@@ -21,7 +21,7 @@ class TestBitmex(Test, Bitmex):
 
     def test_BTC_USD_trade(self):
         origin = {
-            'FileName': 'bitmex_trade.gz',
+            'FileName': 'BTC_USD-bitmex_trade.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-bitmex.trade.csv.gz',
         }
@@ -48,7 +48,7 @@ class TestBitmex(Test, Bitmex):
 
     def test_BTC_USD_orderbook10(self):
         origin = {
-            'FileName': 'bitmex_order.gz',
+            'FileName': 'BTC_USD-bitmex_order.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-bitmex.book.csv.gz',
         }

@@ -19,7 +19,7 @@ class TestGdax(Test, Gdax):
 
     def test_BTC_USD_order(self):
         origin = {
-            'FileName': 'gdax_order.gz',
+            'FileName': 'BTC_USD-gdax_order.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-gdax.book.csv.gz',
         }
@@ -44,9 +44,63 @@ class TestGdax(Test, Gdax):
         fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
 
+    def test_BCH_USD_order(self):
+        origin = {
+            'FileName': 'BCH_USD-gdax_order.gz',
+            'Date': '2018/05/10',
+            'Output': 'BCH_USD-gdax.book.csv.gz',
+        }
+        self.initialization('BCH/USD', 'order', origin['Date'])
+
+        input_key = self.Config['RedisCollectKey']
+        self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
+
+        try:
+            with timeout(100, exception=RuntimeWarning):
+                self.process_data()
+        except RuntimeWarning:
+            pass
+
+        try:
+            with timeout(50, exception=RuntimeWarning):
+                self.write_data_csv()
+        except RuntimeWarning:
+            pass
+
+        fn1 = origin['Output']
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
+        self.compare_two_csv(fn1, fn2)
+
+    def test_ETH_USD_order(self):
+        origin = {
+            'FileName': 'ETH_USD-gdax_order.gz',
+            'Date': '2018/05/10',
+            'Output': 'ETH_USD-gdax.book.csv.gz',
+        }
+        self.initialization('ETH/USD', 'order', origin['Date'])
+
+        input_key = self.Config['RedisCollectKey']
+        self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
+
+        try:
+            with timeout(50, exception=RuntimeWarning):
+                self.process_data()
+        except RuntimeWarning:
+            pass
+
+        try:
+            with timeout(40, exception=RuntimeWarning):
+                self.write_data_csv()
+        except RuntimeWarning:
+            pass
+
+        fn1 = origin['Output']
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
+        self.compare_two_csv(fn1, fn2)
+
     def test_BTC_USD_ticker(self):
         origin = {
-            'FileName': 'gdax_ticker.gz',
+            'FileName': 'BTC_USD-gdax_ticker.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-gdax.ticker.csv.gz',
         }
@@ -63,6 +117,60 @@ class TestGdax(Test, Gdax):
 
         try:
             with timeout(1, exception=RuntimeWarning):
+                self.write_data_csv()
+        except RuntimeWarning:
+            pass
+
+        fn1 = origin['Output']
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
+        self.compare_two_csv(fn1, fn2)
+
+    def test_BCH_USD_ticker(self):
+        origin = {
+            'FileName': 'BCH_USD-gdax_ticker.gz',
+            'Date': '2018/05/10',
+            'Output': 'BCH_USD-gdax.ticker.csv.gz',
+        }
+        self.initialization('BCH/USD', 'ticker', origin['Date'])
+
+        input_key = self.Config['RedisCollectKey']
+        self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
+
+        try:
+            with timeout(20, exception=RuntimeWarning):
+                self.process_data()
+        except RuntimeWarning:
+            pass
+
+        try:
+            with timeout(10, exception=RuntimeWarning):
+                self.write_data_csv()
+        except RuntimeWarning:
+            pass
+
+        fn1 = origin['Output']
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
+        self.compare_two_csv(fn1, fn2)
+
+    def test_ETH_USD_ticker(self):
+        origin = {
+            'FileName': 'ETH_USD-gdax_ticker.gz',
+            'Date': '2018/05/10',
+            'Output': 'ETH_USD-gdax.ticker.csv.gz',
+        }
+        self.initialization('ETH/USD', 'ticker', origin['Date'])
+
+        input_key = self.Config['RedisCollectKey']
+        self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
+
+        try:
+            with timeout(20, exception=RuntimeWarning):
+                self.process_data()
+        except RuntimeWarning:
+            pass
+
+        try:
+            with timeout(10, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass

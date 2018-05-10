@@ -16,7 +16,7 @@ class TestGemini(Test, Gemini):
 
     def test_BTC_USD_order(self):
         origin = {
-            'FileName': 'gemini_data.gz',
+            'FileName': 'BTC_USD-gemini_data.gz',
             'Date': '2018/04/24',
             'Output': 'BTC_USD-gemini.book.csv.gz',
         }
@@ -43,7 +43,7 @@ class TestGemini(Test, Gemini):
 
     def test_BTC_USD_order_2(self):
         origin = {
-            'FileName': 'gemini_data_2.gz',
+            'FileName': 'BTC_USD-gemini_data_2.gz',
             'Date': '2018/04/25',
             'Output': 'BTC_USD-gemini-2.book.csv.gz',
         }
@@ -60,6 +60,33 @@ class TestGemini(Test, Gemini):
 
         try:
             with timeout(5, exception=RuntimeWarning):
+                self.write_data_csv()
+        except RuntimeWarning:
+            pass
+
+        fn1 = origin['Output']
+        fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
+        self.compare_two_csv(fn1, fn2)
+
+    def test_ETH_USD_order(self):
+        origin = {
+            'FileName': 'ETH_USD-gemini_data.gz',
+            'Date': '2018/05/10',
+            'Output': 'ETH_USD-gemini.book.csv.gz',
+        }
+        self.initialization('ETH/USD', 'order', origin['Date'])
+
+        input_key = self.Config['RedisCollectKey']
+        self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
+
+        try:
+            with timeout(100, exception=RuntimeWarning):
+                self.process_data()
+        except RuntimeWarning:
+            pass
+
+        try:
+            with timeout(60, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass

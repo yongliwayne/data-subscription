@@ -74,6 +74,8 @@ class Gdax(Exchange):
             elif initiate:
                 data = [msg.get(k) for k in self.Config['Header']]
                 ts = self.date_from_str(msg.get('time', '2010-01-01T00:00:01.000000Z'))
+                if int(ts.timestamp()) == 1262304001 and msg.get('trade_id', None) is None:
+                    continue
                 dt = self.fmt_date(ts.timestamp() * 1000)
                 ts = int(ts.timestamp() * 1000)
                 self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))

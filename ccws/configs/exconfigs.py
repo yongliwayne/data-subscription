@@ -111,7 +111,7 @@ GdaxConfigs = {
         'ticker': {
             'Subscription': {
                 'type': 'subscribe',
-                'channels': [{'name': 'ticker', 'product_ids': ['BTC-USD']}],
+                'channels': [{'name': 'ticker', 'product_ids': ['BCH-USD']}],
             },
             'Header': [
                 'price',
@@ -127,28 +127,117 @@ GdaxConfigs = {
                 'sequence',
                 'trade_id',
             ],
-            'FileName': 'BTC_USD-gdax.ticker.csv',
-            'RedisCollectKey': 'gdax-BTC_USD-ticker_raw',
-            'RedisOutputKey': 'gdax-BTC_USD-ticker',
+            'FileName': 'BCH_USD-gdax.ticker.csv',
+            'RedisCollectKey': 'gdax-BCH_USD-ticker_raw',
+            'RedisOutputKey': 'gdax-BCH_USD-ticker',
             'DataHandler': 'process_ticker_data',
         },
 
         'order': {
             'Subscription': {
                 'type': 'subscribe',
-                'channels': [{'name': 'level2', 'product_ids': ['BTC-USD']}],
+                'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
             },
             'OrderBookDepth': 12,
             'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
-            'FileName': 'BTC_USD-gdax.book.csv',
-            'RedisCollectKey': 'gdax-BTC_USD-order_raw',
-            'RedisOutputKey': 'gdax-BTC_USD-order_processed',
+            'FileName': 'BCH_USD-gdax.book.csv',
+            'RedisCollectKey': 'gdax-BCH_USD-order_raw',
+            'RedisOutputKey': 'gdax-BCH_USD-order_processed',
             'DataHandler': 'process_order_book_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
         },
 
     },
+
+    'BCH/USD': {
+
+        'ticker': {
+            'Subscription': {
+                'type': 'subscribe',
+                'channels': [{'name': 'ticker', 'product_ids': ['BCH-USD']}],
+            },
+            'Header': [
+                'price',
+                'last_size',
+                'side',
+                'best_ask',
+                'best_bid',
+                'high_24h',
+                'low_24h',
+                'open_24h',
+                'volume_24h',
+                'volume_30d',
+                'sequence',
+                'trade_id',
+            ],
+            'FileName': 'BCH_USD-gdax.ticker.csv',
+            'RedisCollectKey': 'gdax-BCH_USD-ticker_raw',
+            'RedisOutputKey': 'gdax-BCH_USD-ticker',
+            'DataHandler': 'process_ticker_data',
+        },
+
+        'order': {
+            'Subscription': {
+                'type': 'subscribe',
+                'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
+            },
+            'OrderBookDepth': 12,
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
+            'FileName': 'BCH_USD-gdax.book.csv',
+            'RedisCollectKey': 'gdax-BCH_USD-order_raw',
+            'RedisOutputKey': 'gdax-BCH_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+
+    },
+
+    'ETH/USD': {
+
+        'ticker': {
+            'Subscription': {
+                'type': 'subscribe',
+                'channels': [{'name': 'ticker', 'product_ids': ['ETH-USD']}],
+            },
+            'Header': [
+                'price',
+                'last_size',
+                'side',
+                'best_ask',
+                'best_bid',
+                'high_24h',
+                'low_24h',
+                'open_24h',
+                'volume_24h',
+                'volume_30d',
+                'sequence',
+                'trade_id',
+            ],
+            'FileName': 'ETH_USD-gdax.ticker.csv',
+            'RedisCollectKey': 'gdax-ETH_USD-ticker_raw',
+            'RedisOutputKey': 'gdax-ETH_USD-ticker',
+            'DataHandler': 'process_ticker_data',
+        },
+
+        'order': {
+            'Subscription': {
+                'type': 'subscribe',
+                'channels': [{'name': 'level2', 'product_ids': ['ETH-USD']}],
+            },
+            'OrderBookDepth': 12,
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
+            'FileName': 'ETH_USD-gdax.book.csv',
+            'RedisCollectKey': 'gdax-ETH_USD-order_raw',
+            'RedisOutputKey': 'gdax-ETH_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+
+    },
+
 }
 
 _gemini_trade_info_header = [
@@ -169,6 +258,21 @@ GeminiConfigs = {
             'FileName': 'BTC_USD-gemini.book.csv',
             'RedisCollectKey': 'gemini-BTC_USD_raw',
             'RedisOutputKey': 'gemini-BTC_USD_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+
+    'ETH/USD': {
+        'order': {
+            'url_append': '/marketdata/ETHUSD',
+            'OrderBookDepth': 12,
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12) + _gemini_trade_info_header + ['lasttradetime'],
+            'TradeInfoHeader': _gemini_trade_info_header,
+            'FileName': 'ETH_USD-gemini.book.csv',
+            'RedisCollectKey': 'gemini-ETH_USD_raw',
+            'RedisOutputKey': 'gemini-ETH_USD_processed',
             'DataHandler': 'process_order_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
