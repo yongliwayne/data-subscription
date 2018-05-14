@@ -111,7 +111,7 @@ GdaxConfigs = {
         'ticker': {
             'Subscription': {
                 'type': 'subscribe',
-                'channels': [{'name': 'ticker', 'product_ids': ['BCH-USD']}],
+                'channels': [{'name': 'ticker', 'product_ids': ['BTC-USD']}],
             },
             'Header': [
                 'price',
@@ -127,22 +127,22 @@ GdaxConfigs = {
                 'sequence',
                 'trade_id',
             ],
-            'FileName': 'BCH_USD-gdax.ticker.csv',
-            'RedisCollectKey': 'gdax-BCH_USD-ticker_raw',
-            'RedisOutputKey': 'gdax-BCH_USD-ticker',
+            'FileName': 'BTC_USD-gdax.ticker.csv',
+            'RedisCollectKey': 'gdax-BTC_USD-ticker_raw',
+            'RedisOutputKey': 'gdax-BTC_USD-ticker',
             'DataHandler': 'process_ticker_data',
         },
 
         'order': {
             'Subscription': {
                 'type': 'subscribe',
-                'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
+                'channels': [{'name': 'level2', 'product_ids': ['BTC-USD']}],
             },
             'OrderBookDepth': 12,
             'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
-            'FileName': 'BCH_USD-gdax.book.csv',
-            'RedisCollectKey': 'gdax-BCH_USD-order_raw',
-            'RedisOutputKey': 'gdax-BCH_USD-order_processed',
+            'FileName': 'BTC_USD-gdax.book.csv',
+            'RedisCollectKey': 'gdax-BTC_USD-order_raw',
+            'RedisOutputKey': 'gdax-BTC_USD-order_processed',
             'DataHandler': 'process_order_book_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
