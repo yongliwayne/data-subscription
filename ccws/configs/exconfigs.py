@@ -131,7 +131,7 @@ GdaxConfigs = {
                 'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
             },
             'OrderBookDepth': 5,
-            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(5),
             'FileName': 'BCH_USD-gdax.book.csv',
             'RedisCollectKey': 'gdax-BCH_USD-order_raw',
             'RedisOutputKey': 'gdax-BCH_USD-order_processed',
