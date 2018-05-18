@@ -8,12 +8,51 @@ from email.mime.text import MIMEText
 import logging
 from logging.handlers import RotatingFileHandler
 import argparse
+import pytz
 
 
 my_sender = 'report_ccws_2018@163.com'
 my_pass = 'report123'
 my_user = ['yongliwang2014@gmail.com', '1400012716@pku.edu.cn']
 logger = logging.getLogger('testcase')
+
+check_process_config = {
+    'CME': {
+        'available_time': {
+            '0': [[0, 0, 16, 0], [17, 0, 23, 59]],
+            '1': [[0, 0, 16, 0], [17, 0, 23, 59]],
+            '2': [[0, 0, 16, 0], [17, 0, 23, 59]],
+            '3': [[0, 0, 16, 0], [17, 0, 23, 59]],
+            '4': [[0, 0, 16, 0]],
+            '5': [[0, 0, 0, 0]],
+            '6': [[17, 0, 23, 59]],
+        },
+    },
+
+    'CBOE': {
+        'available_time': {
+            '0': [[0, 0, 15, 15], [15, 30, 16, 0], [17, 0, 23, 59]],
+            '1': [[0, 0, 15, 15], [15, 30, 16, 0], [17, 0, 23, 59]],
+            '2': [[0, 0, 15, 15], [15, 30, 16, 0], [17, 0, 23, 59]],
+            '3': [[0, 0, 15, 15], [15, 30, 16, 0], [17, 0, 23, 59]],
+            '4': [[0, 0, 15, 15], [15, 30, 16, 0]],
+            '5': [[0, 0, 0, 0]],
+            '6': [[17, 0, 23, 59]],
+        },
+    },
+}
+
+
+def check_time_available(ex):
+    time_zone = pytz.timezone('America/Chicago')
+    tmr = datetime.datetime.fromtimestamp(time.time(), time_zone)
+    h = tmr.hour
+    m = tmr.minute
+    available = check_process_config[ex]['available_time'][str(tmr.weekday())]
+    for t in available:
+        if (h > t[0] or (h == t[0] and m >= t[1])) and (h < t[2] or (h == t[2] and m <= t[3])):
+            return True
+    return False
 
 
 def set_logger(path):
@@ -87,6 +126,16 @@ def check_process(path, time_gap):
     wrong_info = ''
 
     for i in range(len(file_list)):
+        if file_list[i] in ['BTC_USD-CBOE.book.csv', 'BTC_USD-CBOE.tick.csv',
+                            'BTC_USD-CME.book.csv', 'BTC_USD-CME.tick.csv']:
+            if 'CBOE' in file_list[i] and not check_time_available('CBOE'):
+                exit(0)
+            elif 'CME' in file_list[i] and not check_time_available('CME'):
+                exit(0)
+        if 'book' in file_list[i] and not today.minute % 10:
+            exit(0)
+        if 'tick' in file_list[i] and not today.minute % 15:
+            exit(0)
         path = os.path.join(base_dir, file_list[i])
         modify_time = os.path.getmtime(path)
         now = time.time()
