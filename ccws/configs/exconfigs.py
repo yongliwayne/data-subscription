@@ -125,20 +125,20 @@ GdaxConfigs = {
             'DataHandler': 'process_ticker_data',
         },
 
-        # 'order': {
-        #     'Subscription': {
-        #         'type': 'subscribe',
-        #         'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
-        #     },
-        #     'OrderBookDepth': 12,
-        #     'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
-        #     'FileName': 'BCH_USD-gdax.book.csv',
-        #     'RedisCollectKey': 'gdax-BCH_USD-order_raw',
-        #     'RedisOutputKey': 'gdax-BCH_USD-order_processed',
-        #     'DataHandler': 'process_order_book_data',
-        #     'TickSize': 0.01,
-        #     'AmountMin': 1e-8,
-        # },
+        'order': {
+            'Subscription': {
+                'type': 'subscribe',
+                'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
+            },
+            'OrderBookDepth': 5,
+            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
+            'FileName': 'BCH_USD-gdax.book.csv',
+            'RedisCollectKey': 'gdax-BCH_USD-order_raw',
+            'RedisOutputKey': 'gdax-BCH_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
 
     },
 
