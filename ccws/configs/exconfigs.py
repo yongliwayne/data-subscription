@@ -56,58 +56,6 @@ HuobiConfigs = {
 
 GdaxConfigs = {
     'BTC/USD': {
-        # 'order.received': {
-        #     'Subscription': {
-        #         'type': 'subscribe',
-        #         'channels': [{'name': 'full', 'product_ids': ['BTC-USD']}],
-        #     },
-        #     'Header': [
-        #         'client_oid',
-        #         'order_id',
-        #         'order_type',
-        #         'price',
-        #         'sequence',
-        #         'side',
-        #         'size',
-        #         'funds',
-        #     ],
-        #     'FileName': 'BTC_USD-gdax.order.received.csv',
-        #     'RedisQueueKey': 'gdax-BTC_USD-order_received',
-        # },
-        #
-        # 'order.open': {
-        #     'Subscription': {
-        #         'type': 'subscribe',
-        #         'channels': [{'name': 'full', 'product_ids': ['BTC-USD']}],
-        #     },
-        #     'Header': [
-        #         'order_id',
-        #         'price',
-        #         'remaining_size',
-        #         'sequence',
-        #         'side',
-        #     ],
-        #     'FileName': 'BTC_USD-gdax.order.open.csv',
-        #     'RedisQueueKey': 'gdax-BTC_USD-order_open',
-        # },
-        #
-        # 'order.done': {
-        #     'Subscription': {
-        #         'type': 'subscribe',
-        #         'channels': [{'name': 'full', 'product_ids': ['BTC-USD']}],
-        #     },
-        #     'Header': [
-        #         'order_id',
-        #         'price',
-        #         'reason',
-        #         'remaining_size',
-        #         'sequence',
-        #         'side',
-        #     ],
-        #     'FileName': 'BTC_USD-gdax.order.done.csv',
-        #     'RedisQueueKey': 'gdax-BTC_USD-order_done',
-        # },
-
         'ticker': {
             'Subscription': {
                 'type': 'subscribe',
@@ -177,20 +125,20 @@ GdaxConfigs = {
             'DataHandler': 'process_ticker_data',
         },
 
-        'order': {
-            'Subscription': {
-                'type': 'subscribe',
-                'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
-            },
-            'OrderBookDepth': 12,
-            'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
-            'FileName': 'BCH_USD-gdax.book.csv',
-            'RedisCollectKey': 'gdax-BCH_USD-order_raw',
-            'RedisOutputKey': 'gdax-BCH_USD-order_processed',
-            'DataHandler': 'process_order_book_data',
-            'TickSize': 0.01,
-            'AmountMin': 1e-8,
-        },
+        # 'order': {
+        #     'Subscription': {
+        #         'type': 'subscribe',
+        #         'channels': [{'name': 'level2', 'product_ids': ['BCH-USD']}],
+        #     },
+        #     'OrderBookDepth': 12,
+        #     'Header': ['IsSnapShot'] + order_book_header_with_depth(12),
+        #     'FileName': 'BCH_USD-gdax.book.csv',
+        #     'RedisCollectKey': 'gdax-BCH_USD-order_raw',
+        #     'RedisOutputKey': 'gdax-BCH_USD-order_processed',
+        #     'DataHandler': 'process_order_book_data',
+        #     'TickSize': 0.01,
+        #     'AmountMin': 1e-8,
+        # },
 
     },
 
