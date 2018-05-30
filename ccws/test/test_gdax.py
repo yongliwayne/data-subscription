@@ -179,17 +179,7 @@ class TestGdax(Test, Gdax):
         fn2 = '%s/%s/%s' % (HOME_PATH, origin['Date'], self.Config['FileName'])
         self.compare_two_csv(fn1, fn2)
 
-    def test_BTC_USD_check_trade(self):
-        self.set_market('BTC/USD', 'order')
-        load_logger_config('gdax_BTC_USD_check_trade_test')
-        logger = logging.getLogger('gdax_BTC_USD_check_trade_test')
-        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
-        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
-                                       'BTC_USD-gdax.book.csv.gz')
-        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
-                                       'BTC_USD-gdax.ticker.csv.gz')
-        output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
-                                          'BTC_USD-gdax.consolidate.book.csv')
+    def check_trade(self, logger, fn1, fn2, output):
         with gzip.open(fn1, 'rt') as f1, gzip.open(fn2, 'rt') as f2, open(output, 'a+') as csvFile:
             reader1 = csv.DictReader(f1)
             reader2 = csv.DictReader(f2)
@@ -234,3 +224,42 @@ class TestGdax(Test, Gdax):
                     last_book = present_book
         subprocess.call('gzip %s' % output, shell=True)
         self.assertEqual(missing_time, 0)
+
+    def test_BTC_USD_check_trade(self):
+        self.set_market('BTC/USD', 'order')
+        load_logger_config('gdax_BTC_USD_check_trade_test')
+        logger = logging.getLogger('gdax_BTC_USD_check_trade_test')
+        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-gdax.book.csv.gz')
+        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BTC_USD-gdax.ticker.csv.gz')
+        output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                          'BTC_USD-gdax.consolidate.book.csv')
+        self.check_trade(logger, fn1, fn2, output)
+
+    def test_BCH_USD_check_trade(self):
+        self.set_market('BCH/USD', 'order')
+        load_logger_config('gdax_BCH_USD_check_trade_test')
+        logger = logging.getLogger('gdax_BCH_USD_check_trade_test')
+        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BCH_USD-gdax.book.csv.gz')
+        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'BCH_USD-gdax.ticker.csv.gz')
+        output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                          'BCH_USD-gdax.consolidate.book.csv')
+        self.check_trade(logger, fn1, fn2, output)
+
+    def test_ETH_USD_check_trade(self):
+        self.set_market('ETH/USD', 'order')
+        load_logger_config('gdax_ETH_USD_check_trade_test')
+        logger = logging.getLogger('gdax_ETH_USD_check_trade_test')
+        yesterday = datetime.datetime.fromtimestamp(time.time(), TIMEZONE) + datetime.timedelta(days=-1)
+        fn1 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'ETH_USD-gdax.book.csv.gz')
+        fn2 = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                       'ETH_USD-gdax.ticker.csv.gz')
+        output = '%s/%4d/%02d/%02d/%s' % (HOME_PATH, yesterday.year, yesterday.month, yesterday.day,
+                                          'ETH_USD-gdax.consolidate.book.csv')
+        self.check_trade(logger, fn1, fn2, output)
