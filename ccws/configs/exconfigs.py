@@ -283,7 +283,7 @@ BitmexConfigs = {
 BinanceConfigs = {
     'BTC/USD': {
         'order': {
-            'url_append': '/ws/btcusd@depth20',
+            'url_append': '/ws/btcusdt@depth20',
             'Header': order_book_header_with_depth(20),
             'FileName': 'BTC_USD-binance.book.csv',
             'RedisCollectKey': 'binance-BTC_USD-order_raw',
@@ -291,6 +291,21 @@ BinanceConfigs = {
             'DataHandler': 'process_order_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
+        },
+        'ticker': {
+            'url_append': '/ws/btcusdt@trade',
+            'Header': [
+                'size',
+                'price',
+                'eventtime',
+                'tradeId',
+                'buyerId',
+                'sellerId',
+            ],
+            'FileName': 'BTC_USD-binance.ticker.csv',
+            'RedisCollectKey': 'binance-BTC_USD-ticker_raw',
+            'RedisOutputKey': 'binance-BTC_USD-ticker_processed',
+            'DataHandler': 'process_trade_data',
         },
     },
 }
