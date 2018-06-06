@@ -280,9 +280,25 @@ BitmexConfigs = {
     },
 }
 
+BinanceConfigs = {
+    'BTC/USD': {
+        'order': {
+            'url_append': '/ws/btcusd@depth20',
+            'Header': order_book_header_with_depth(20),
+            'FileName': 'BTC_USD-binance.book.csv',
+            'RedisCollectKey': 'binance-BTC_USD-order_raw',
+            'RedisOutputKey': 'binance-BTC_USD-order_processed',
+            'DataHandler': 'process_order__data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+}
+
 ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
     'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
     'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
+    'Binance': [BinanceConfigs, 'wss://stream.binance.com:9443'],
 }
