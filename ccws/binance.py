@@ -42,7 +42,7 @@ class Binance(Exchange):
             book_pre = book
             self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + book))
 
-    def process_ticker_data(self):
+    def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
         while True:
@@ -51,8 +51,9 @@ class Binance(Exchange):
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             msg = json.loads(msg)
-            ts = int(msg.get('T', 0)) * 1000
+            ts = int(msg.get('T', 0))
             dt = self.fmt_date(ts)
             con = ['q', 'p', 'E', 't', 'b', 'a']
             data = [msg.get(k) for k in con]
             self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
+
