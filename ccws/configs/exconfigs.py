@@ -288,7 +288,7 @@ BinanceConfigs = {
             'FileName': 'BTC_USD-binance.book.csv',
             'RedisCollectKey': 'binance-BTC_USD-order_raw',
             'RedisOutputKey': 'binance-BTC_USD-order_processed',
-            'DataHandler': 'process_order__data',
+            'DataHandler': 'process_order_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
         },
