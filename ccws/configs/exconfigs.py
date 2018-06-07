@@ -280,9 +280,40 @@ BitmexConfigs = {
     },
 }
 
+BinanceConfigs = {
+    'BTC/USDT': {
+        'order': {
+            'url_append': '/ws/btcusdt@depth20',
+            'Header': order_book_header_with_depth(20),
+            'FileName': 'BTC_USDT-binance.book.csv',
+            'RedisCollectKey': 'binance-BTC_USDT-order_raw',
+            'RedisOutputKey': 'binance-BTC_USDT-order_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+        'ticker': {
+            'url_append': '/ws/btcusdt@trade',
+            'Header': [
+                'size',
+                'price',
+                'eventtime',
+                'tradeId',
+                'buyerId',
+                'sellerId',
+            ],
+            'FileName': 'BTC_USDT-binance.ticker.csv',
+            'RedisCollectKey': 'binance-BTC_USDT-ticker_raw',
+            'RedisOutputKey': 'binance-BTC_USDT-ticker_processed',
+            'DataHandler': 'process_trade_data',
+        },
+    },
+}
+
 ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
     'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
     'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
+    'Binance': [BinanceConfigs, 'wss://stream.binance.com:9443'],
 }
