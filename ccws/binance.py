@@ -26,7 +26,7 @@ class Binance(Exchange):
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             ts, msg = ct, json.loads(msg)
             id = int(msg.get('lastUpdateId', 0))
-            if last_id != -100 and id > last_id:
+            if last_id != -100 and id < last_id:
                 self.Logger.warning('Missing Data in front of %d' % id)
             dt = self.fmt_date(ts)
             asks, bids = msg.get('asks'), msg.get('bids')
