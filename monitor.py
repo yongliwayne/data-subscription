@@ -80,7 +80,7 @@ def send_report(mail_body):
 
 
 def run_test():
-    test_dir = '/data/data/script/data-subscription/'
+    test_dir = '/data/data/script/data-subscription/ccws/test/'
     discover = unittest.defaultTestLoader.discover(test_dir, pattern='test_*.py')
     runner = unittest.TextTestRunner()
     res = runner.run(discover)
