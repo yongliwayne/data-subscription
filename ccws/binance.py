@@ -25,9 +25,9 @@ class Binance(Exchange):
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
             ts, msg = ct, json.loads(msg)
-            id = int(msg.get('lastUpdateId', 0))
-            if last_id != -100 and id < last_id:
-                self.Logger.warning('Missing Data in front of %d' % id)
+            uid = int(msg.get('lastUpdateId', 0))
+            if last_id != -100 and uid < last_id:
+                self.Logger.warning('Missing Data in front of %d' % uid)
             dt = self.fmt_date(ts)
             asks, bids = msg.get('asks'), msg.get('bids')
             asks = [x[0:2] for x in asks]
@@ -36,7 +36,7 @@ class Binance(Exchange):
             asks.sort(key=lambda x: x[0])
             book = bids + asks
             book = sum(book, [])
-            last_id = id
+            last_id = uid
             if book == book_pre:
                 continue
             book_pre = book
