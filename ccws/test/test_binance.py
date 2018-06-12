@@ -27,7 +27,7 @@ class TestBinance(Test, Binance):
             pass
 
         try:
-            with timeout(5, exception=RuntimeWarning):
+            with timeout(8, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
@@ -48,13 +48,13 @@ class TestBinance(Test, Binance):
         self.write_into_redis(input_key, self.RedisConnection, origin['FileName'])
 
         try:
-            with timeout(5, exception=RuntimeWarning):
+            with timeout(10, exception=RuntimeWarning):
                 self.process_data()
         except RuntimeWarning:
             pass
 
         try:
-            with timeout(5, exception=RuntimeWarning):
+            with timeout(20, exception=RuntimeWarning):
                 self.write_data_csv()
         except RuntimeWarning:
             pass
