@@ -311,17 +311,17 @@ BinanceConfigs = {
 }
 
 OkexConfigs = {
-    'BTC/USD': {
+    'BTC/USDT': {
         'order': {
             'Subscription': {
                 'event': 'addChannel',
-                'channel': 'ok_sub_spot_btc_usd_depth_20',
+                'channel': 'ok_sub_spot_btc_usdt_depth_20',
             },
             'OrderBookDepth': 20,
             'Header': order_book_header_with_depth(20),
-            'FileName': 'BTC_USD-okex.book.csv',
-            'RedisCollectKey': 'okex-BTC_USD-order_raw',
-            'RedisOutputKey': 'okex-BTC_USD-order_processed',
+            'FileName': 'BTC_USDT-okex.book.csv',
+            'RedisCollectKey': 'okex-BTC_USDT-order_raw',
+            'RedisOutputKey': 'okex-BTC_USDT-order_processed',
             'DataHandler': 'process_order_data',
             'TickSize': 0.01,
             'AmountMin': 1e-8,
