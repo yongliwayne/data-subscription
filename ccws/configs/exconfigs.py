@@ -310,10 +310,30 @@ BinanceConfigs = {
     },
 }
 
+OkexConfigs = {
+    'BTC/USD': {
+        'order': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_btc_usd_depth_20',
+            },
+            'OrderBookDepth': 20,
+            'Header': order_book_header_with_depth(20),
+            'FileName': 'BTC_USD-okex.book.csv',
+            'RedisCollectKey': 'okex-BTC_USD-order_raw',
+            'RedisOutputKey': 'okex-BTC_USD-order_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+}
+
 ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
     'Gemini': [GeminiConfigs, 'wss://api.gemini.com/v1/'],
     'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
     'Binance': [BinanceConfigs, 'wss://stream.binance.com:9443'],
+    'Okex': [OkexConfigs, 'wss://real.okex.com:10441/websocket'],
 }
