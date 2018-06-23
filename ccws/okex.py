@@ -50,11 +50,13 @@ class Okex(Exchange):
                 time.sleep(60)
                 continue
             [ct, msg] = json.loads(self.RedisConnection.rpop(input_key).decode('utf-8'))
-            msg = json.loads(msg)
-            events = msg.get('data', [])
-            for event in events:
-                data = [event.get(k) for k in self.Config['Header']]
-                ts = self.date_from_str(event.get('timestamp', '2010-01-01T00:00:01.000000Z'))
-                dt = self.fmt_date(ts.timestamp() * 1000)
-                ts = int(ts.timestamp() * 1000)
-                self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + data))
+            msg = json.loads(msg)[0]
+            if msg.get('channel', None) == 'addChannel':
+                initial = True
+                continue
+            elif initial:
+                events = msg.get('data', [])
+                for event in events:
+                    ts = ct
+                    dt = self.fmt_date(ts)
+                    self.RedisConnection.lpush(output_key, json.dumps([ct, ts, dt] + event))
