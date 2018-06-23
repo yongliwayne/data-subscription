@@ -45,6 +45,7 @@ class Okex(Exchange):
     def process_trade_data(self):
         input_key = self.Config['RedisCollectKey']
         output_key = self.Config['RedisOutputKey']
+        initial = False
         while True:
             if self.RedisConnection.llen(input_key) < 1:
                 time.sleep(60)
