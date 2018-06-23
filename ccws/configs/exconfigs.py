@@ -345,6 +345,76 @@ OkexConfigs = {
             'DataHandler': 'process_trade_data',
         },
     },
+
+    'BCH/USDT': {
+        'order': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_bch_usdt_depth_20',
+            },
+            'OrderBookDepth': 20,
+            'Header': order_book_header_with_depth(20),
+            'FileName': 'BCH_USDT-okex.book.csv',
+            'RedisCollectKey': 'okex-BCH_USDT-order_raw',
+            'RedisOutputKey': 'okex-BCH_USDT-order_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+
+        'trade': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_bch_usdt_deals',
+            },
+            'Header': [
+                'dealid',
+                'price',
+                'size',
+                'dealtime',
+                'side',
+            ],
+            'FileName': 'BCH_USDT-okex.trade.csv',
+            'RedisCollectKey': 'okex-BCH_USDT-trade_raw',
+            'RedisOutputKey': 'okex-BCH_USDT-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
+    },
+
+    'ETH/USDT': {
+        'order': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_eth_usdt_depth_20',
+            },
+            'OrderBookDepth': 20,
+            'Header': order_book_header_with_depth(20),
+            'FileName': 'ETH_USDT-okex.book.csv',
+            'RedisCollectKey': 'okex-ETH_USDT-order_raw',
+            'RedisOutputKey': 'okex-ETH_USDT-order_processed',
+            'DataHandler': 'process_order_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+
+        'trade': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_eth_usdt_deals',
+            },
+            'Header': [
+                'dealid',
+                'price',
+                'size',
+                'dealtime',
+                'side',
+            ],
+            'FileName': 'ETH_USDT-okex.trade.csv',
+            'RedisCollectKey': 'okex-ETH_USDT-trade_raw',
+            'RedisOutputKey': 'okex-ETH_USDT-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
+    },
 }
 
 ExConfigs = {
