@@ -326,6 +326,24 @@ OkexConfigs = {
             'TickSize': 0.01,
             'AmountMin': 1e-8,
         },
+
+        'trade': {
+            'Subscription': {
+                'event': 'addChannel',
+                'channel': 'ok_sub_spot_btc_usdt_deals',
+            },
+            'Header': [
+                'side',
+                'size',
+                'price',
+                'dealid',
+                'dealtime',
+            ],
+            'FileName': 'BTC_USDT-okex.trade.csv',
+            'RedisCollectKey': 'okex-BTC_USDT-trade_raw',
+            'RedisOutputKey': 'okex-BTC_USDT-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
     },
 }
 
