@@ -133,7 +133,8 @@ class Exchange(object):
             else:
                 book[res[0]][1] = remaining
         else:
-            book.insert(res[0], [price, remaining])
+            if remaining >= self.Config['AmountMin']:
+                book.insert(res[0], [price, remaining])
 
     @staticmethod
     def _cut_order_book(bids, asks, depth):
