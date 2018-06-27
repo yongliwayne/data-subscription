@@ -136,6 +136,21 @@ class Exchange(object):
             if remaining >= self.Config['AmountMin']:
                 book.insert(res[0], [price, remaining])
 
+    def check_data_validation(self, book):
+        length = int(len(book)/2)
+        for i in range(0, length - 2, 2):
+            if book[i] <= book[i + 2]:
+                return False
+        for i in range(length, 2 * length - 2, 2):
+            if book[i] >= book[i + 2]:
+                return False
+        for i in range(1, 2 * length, 2):
+            if book[i] < self.Config['AmountMin']:
+                return False
+        if book[0] > book[length]:
+            return False
+        return True
+
     @staticmethod
     def _cut_order_book(bids, asks, depth):
         if len(bids) >= depth:
