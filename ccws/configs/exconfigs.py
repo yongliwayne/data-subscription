@@ -417,6 +417,47 @@ OkexConfigs = {
     },
 }
 
+BitfinexConfigs = {
+    'BTC/USD': {
+        'trade': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'trades',
+                'symbol': 'tBTCUSD',
+            },
+            'Header': [
+                'side',
+                'size',
+                'price',
+                'tickDirection',
+                'trdMatchID',
+                'grossValue',
+                'homeNotional',
+                'foreignNotional',
+            ],
+            'FileName': 'BTC_USD-bitfinex.trade.csv',
+            'RedisCollectKey': 'bitfinex-BTC_USD-trade_raw',
+            'RedisOutputKey': 'bitfinex-BTC_USD-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
+
+        'order': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'book',
+                'symbol': 'tBTCUSD',
+            },
+            'Header': order_book_header_with_depth(10),
+            'FileName': 'BTC_USD-bitfinex.book.csv',
+            'RedisCollectKey': 'bitfinex-BTC_USD-order_raw',
+            'RedisOutputKey': 'bitfinex-BTC_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+}
+
 ExConfigs = {
     'Gdax': [GdaxConfigs, 'wss://ws-feed.gdax.com'],
     'Huobipro': [HuobiConfigs, 'wss://api.huobipro.com/ws'],
@@ -424,4 +465,5 @@ ExConfigs = {
     'Bitmex': [BitmexConfigs, 'wss://www.bitmex.com/realtime'],
     'Binance': [BinanceConfigs, 'wss://stream.binance.com:9443'],
     'Okex': [OkexConfigs, 'wss://real.okex.com:10441/websocket'],
+    'Bitfinex': [BitfinexConfigs, 'wss://api.bitfinex.com/ws/2'],
 }

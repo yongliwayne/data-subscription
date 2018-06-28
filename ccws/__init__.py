@@ -7,5 +7,7 @@ from ccws.gemini import Gemini
 from ccws.bitmex import Bitmex
 from ccws.binance import Binance
 from ccws.okex import Okex
+from ccws.bitfinex import Bitfinex
 
-__all__ = ['Exchange', 'Huobipro', 'Gdax', 'Gemini', 'Bitmex', 'Binance', 'Okex']
+__all__ = ['Exchange', 'Huobipro', 'Gdax', 'Gemini',
+           'Bitmex', 'Binance', 'Okex', 'Bitfinex']
