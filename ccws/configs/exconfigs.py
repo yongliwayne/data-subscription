@@ -454,6 +454,80 @@ BitfinexConfigs = {
             'AmountMin': 1e-8,
         },
     },
+
+    'BCH/USD': {
+        'trade': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'trades',
+                'symbol': 'tBCHUSD',
+            },
+            'Header': [
+                'type',
+                'id',
+                'side',
+                'amount',
+                'price',
+            ],
+            'FileName': 'BCH_USD-bitfinex.trade.csv',
+            'RedisCollectKey': 'bitfinex-BCH_USD-trade_raw',
+            'RedisOutputKey': 'bitfinex-BCH_USD-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
+
+        'order': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'book',
+                'symbol': 'tBCHUSD',
+            },
+            'Header': order_book_header_with_depth(12),
+            'OrderBookDepth': 12,
+            'FileName': 'BCH_USD-bitfinex.book.csv',
+            'RedisCollectKey': 'bitfinex-BCH_USD-order_raw',
+            'RedisOutputKey': 'bitfinex-BCH_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
+
+    'ETH/USD': {
+        'trade': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'trades',
+                'symbol': 'tETHUSD',
+            },
+            'Header': [
+                'type',
+                'id',
+                'side',
+                'amount',
+                'price',
+            ],
+            'FileName': 'ETH_USD-bitfinex.trade.csv',
+            'RedisCollectKey': 'bitfinex-ETH_USD-trade_raw',
+            'RedisOutputKey': 'bitfinex-ETH_USD-trade_processed',
+            'DataHandler': 'process_trade_data',
+        },
+
+        'order': {
+            'Subscription': {
+                'event': 'subscribe',
+                'channel': 'book',
+                'symbol': 'tETHUSD',
+            },
+            'Header': order_book_header_with_depth(12),
+            'OrderBookDepth': 12,
+            'FileName': 'ETH_USD-bitfinex.book.csv',
+            'RedisCollectKey': 'bitfinex-ETH_USD-order_raw',
+            'RedisOutputKey': 'bitfinex-ETH_USD-order_processed',
+            'DataHandler': 'process_order_book_data',
+            'TickSize': 0.01,
+            'AmountMin': 1e-8,
+        },
+    },
 }
 
 ExConfigs = {
