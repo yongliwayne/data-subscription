@@ -140,31 +140,32 @@ class Exchange(object):
         length = int(len(book)/2)
         for i in range(0, length - 2, 2):
             if book[i] <= book[i + 2]:
-                return False
+                return [False, 'increase bid']
         for i in range(length, 2 * length - 2, 2):
             if book[i] >= book[i + 2]:
-                return False
+                return [False, 'decrease ask']
         for i in range(1, 2 * length, 2):
             if book[i] < self.Config['AmountMin']:
-                return False
+                return [False, 'meaningless size']
         for i in range(0, 2*length, 2):
             if book[i] < self.Config['TickSize']/100:
-                return False
+                return [False, 'meaningless price']
         if book[0] > book[length]:
-            return False
-        return True
+            return [False, 'bid greater than ask']
+        return [True, '']
 
     @staticmethod
     def check_timestamp(timestamp, last_timestamp):
         if timestamp < last_timestamp:
-            return False
+            return [False, 'increasing timeline']
         if timestamp < time.time() - 100000 or timestamp > time.time():
-            return False
-        return True
+            return [False, 'timestamp out of limit']
+        return [True, '']
 
     def check_last_price(self, price):
         if price < self.Config['TickSize']/100:
-            return False
+            return [False, 'meaningless price for trade']
+        return [True, '']
 
     @staticmethod
     def _cut_order_book(bids, asks, depth):
