@@ -147,9 +147,24 @@ class Exchange(object):
         for i in range(1, 2 * length, 2):
             if book[i] < self.Config['AmountMin']:
                 return False
+        for i in range(0, 2*length, 2):
+            if book[i] < self.Config['TickSize']/100:
+                return False
         if book[0] > book[length]:
             return False
         return True
+
+    @staticmethod
+    def check_timestamp(timestamp, last_timestamp):
+        if timestamp < last_timestamp:
+            return False
+        if timestamp < time.time() - 100000 or timestamp > time.time():
+            return False
+        return True
+
+    def check_last_price(self, price):
+        if price < self.Config['TickSize']/100:
+            return False
 
     @staticmethod
     def _cut_order_book(bids, asks, depth):
